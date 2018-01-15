@@ -1,2 +1,2 @@
-#Due date for lab
+#Due date
 January 22, 2018
