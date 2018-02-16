@@ -6,6 +6,4 @@
 
 #Function 3: put any line in this project with tag TODO in todo.log
 
-#Function 4: puts all syntax errors from haskell files in to error.log
-
-#Custom function 1:  
+#Function 4: puts all syntax errors from haskell files in to error.log  
