@@ -1,16 +1,22 @@
 #!/bin/bash
 
-#Informs you if the local repo is up to date with the remote repo
-#rev-parse returns the ID of hte branches
+#informs you if the local repo is up to date with the remote repo
 $(git fetch origin)
-localRepo=(git rev-parse master)
-remoteRepo=()
-if [ $upToDate ]
+localRepo=$(git rev-parse master)
+remoteRepo=$(git ls-remote)
+if [ $localRepo -eq $remoteRepo ]
+then
+    echo "Local Repo is up to date with Remote Repo"
+else
+    echo "Local Repo is not up to date with Remote Repo"
+fi
 
-#puts all uncommited changes in changes.log
-
+#puts all uncommitted changes in changes.log
+diffs=$(git diff)
+$diffs > changes.log
 
 #puts each line from every file with the tag TODO into todo.log
+todo=$(grep -r "TODO")
+$todo > todo.log
 
-
-#checks all Haskell files for syntax errors and puts the results into error.log
+#checks all haskell files for syntax errors and puts the results into erro.log
