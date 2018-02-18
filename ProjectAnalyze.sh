@@ -2,9 +2,10 @@
 
 #informs you if the local repo is up to date with the remote repo
 $(git fetch origin)
-localRepo=$(git rev-parse master)
-remoteRepo=$(git ls-remote)
-if [ $localRepo -eq $remoteRepo ]
+localRepo=(git rev-parse master)
+remoteRepo=(git ls-remote)
+if [ $localRepo == $remoteRepo ]
+
 then
     echo "Local Repo is up to date with Remote Repo"
 else
@@ -12,11 +13,10 @@ else
 fi
 
 #puts all uncommitted changes in changes.log
-diffs=$(git diff)
-$diffs > changes.log
+git diff $1 > changes.log
 
 #puts each line from every file with the tag TODO into todo.log
-todo=$(grep -r "TODO")
-$todo > todo.log
+#todo=$(grep -r "TODO")
+#$todo > todo.log
 
-#checks all haskell files for syntax errors and puts the results into erro.log
+#checks all haskell files for syntax errors and puts the results into error.log
