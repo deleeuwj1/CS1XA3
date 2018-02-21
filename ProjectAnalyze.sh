@@ -16,14 +16,14 @@ fi
 git diff $1 > changes.log
 
 #puts each line from every file with the tag #TODO into todo.log
-todo=(grep -r "#TODO" --exclude=todo.log)
+todo=$( grep -r "#TODO" --exclude=todo.log )
 $todo > todo.log 
 
 #checks all haskell files for syntax errors and puts the results into error.log
 f=$1
 for f in "*.hs"
 do
-    ghc -fno-code $f > error.log
+    ghc -fno-code $f 2> error.log
 done
 
 #moves up n number of dirtories
