@@ -15,19 +15,19 @@ fi
 #puts all uncommitted changes in changes.log
 git diff $1 > changes.log
 
-#puts each line from every file with the tag TODO into todo.log
-todo=(grep -r "#TODO" --exclude todo.log)
+#puts each line from every file with the tag #TODO into todo.log
+todo=(grep -r "#TODO" --exclude=todo.log)
 $todo > todo.log 
 
 #checks all haskell files for syntax errors and puts the results into error.log
-file=$1
-for file in "*.hs"
+f=$1
+for f in "*.hs"
 do
-    ghc -fno-code $file > error.log
+    ghc -fno-code $f > error.log
 done
 
 #moves up n number of dirtories
-movingUpDirectories () {
+function movingUpDirectories () {
     echo "Would you like to move up directories? (Y/N)"
     read ans
     if [ $ans = "Y" ]
@@ -41,5 +41,6 @@ movingUpDirectories () {
 	    d=$d/..
             i=i+1
         done
+        cd d
     fi
 }
