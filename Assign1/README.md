@@ -2,13 +2,13 @@ README for Assignment 1
 
 Basic Requirements:
 
-  -Function 1: informs user if the local repo is up to date with the remote repo
+  -isUpToDate: informs user if the local repo is up to date with the remote repo
 
-  -Function 2: puts any changes since last commit in changes.log
+  -uncommittedChanges: puts any changes since last commit in changes.log
 
-  -Function 3: puts any line in this project with tag #TODO in todo.log
+  -findTODO: puts any line in this project with tag #TODO in todo.log
 
-  -Function 4: puts all syntax errors from haskell files in to error.log
+  -haskellErrors: puts all syntax errors from haskell files in to error.log
 
 "Custom Functions":
 
