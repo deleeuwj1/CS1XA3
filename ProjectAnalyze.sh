@@ -23,11 +23,7 @@ function findTODO () {
 
 #checks all haskell files for syntax errors and puts the results into error.log
 function haskellErrors () {
-    f=$1
-    for f in "*.hs"
-    do
-        ghc -fno-code $f 2> error.log
-    done
+    find -name "*.hs" | xargs ghc -fno-code 2> error.log   
 }
 
 #moves up n number of directories
