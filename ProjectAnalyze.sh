@@ -3,14 +3,14 @@
 #informs you if the local repo is up to date with the remote repo
 function isUpToDate () {
     $(git fetch origin)
-    localRepo=(git rev-parse master)
-    remoteRepo=(git rev-parse origin/master)
+    localRepo=$(git rev-parse master)
+    remoteRepo=$(git rev-parse origin/master)
     if [ $localRepo == $remoteRepo ]
     then
         echo "Local Repo is up to date with Remote Repo"
     else
         echo "Local Repo is not up to date with Remote Repo"
-    fi
+    fi    
 }
 
 function uncommittedChanges () {
@@ -32,14 +32,35 @@ function moveUp () {
     if [ $ans == "Y" ]
     then 
         read -p "How many directories would you like to move up?" num
-        i=0
+        i=1
         d=$PWD
         while [ $i -le $num ]
         do
 	    d=$d/..
-            ((i++))
+            echo $d
+            (( i++ ))
         done
-    fi
+        cd "$d"
+    fi   
 }
 
+function findAndGo () {
+    read -p "Enter the name of the file you wish to find: " fileName
+    if [ $(find . -name "$fileName" -type f | wc -l) -gt 0 ]
+    then
+        #fileLocation=(readlink -f ${fileName})
+        $(cd (readlink -f ${fileName}))
+    else
+        echo "$fileName does not exist"
+    fi
+
+}
+
+function differences () {
+    read -p "Would you like to see the differences between your Local and Remote Repos? (Y/N)" ans
+    if [ $ans == "Y" ]
+    then
+        echo $(git diff HEAD..origin/master)
+    fi
+}
 "$@"
