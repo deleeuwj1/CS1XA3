@@ -23,7 +23,7 @@ function findTODO () {
 
 #checks all haskell files for syntax errors and puts the results into error.log
 function haskellErrors () {
-    find -name "*.hs" | xargs ghc -fno-code 2> error.log   
+    find -name "*.hs" | xargs -I {} ghc -fno-code {} &> error.log   
 }
 
 #moves up n number of directories
@@ -34,12 +34,11 @@ function moveUp () {
         read -p "How many directories would you like to move up?" num
         i=0
         d=$PWD
-        while [ i < $num ]
+        while [ $i -le $num ]
         do
-	    d=$d../
-            i=i+1
+	    d=$d/..
+            ((i++))
         done
-        cd d
     fi
 }
 
