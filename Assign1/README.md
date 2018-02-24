@@ -12,4 +12,5 @@
 
 ## Custom Functions:
 
-  reminderOfDiffs: when run, creates and displays a file **diffs.log** that shows all of the changes that have been made since the last commit 
+  remainderOfDiffs: when run, creates and displays a file **diffs.log** that shows all of the changes that have been made since the last commit 
+  findAndMove: modified version of **findFile** from [Jeff Gibson's Project] (https://github.com/gibsoj12/CS1XA3/blob/master/ProjectAnalyze.sh)
