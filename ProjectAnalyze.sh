@@ -11,7 +11,8 @@ echo -e "${WHITE}2. changes will tell you if what changes have been made since y
 echo -e "${WHITE}3. todo will show you all lines containing the tag #TODO." >> menu.txt
 echo -e "${WHITE}4. haskellErrors will show you syntax errors in all Haskell files." >> menu.txt
 echo -e "${WHITE}5. move will move a file from anywhere into your current directory." >> menu.txt
-echo -e "${WHITE}6. diffs will show you the differences between your Local and Remote Repos." >> menu.txt
+echo -e "${WHITE}6. diffs will show you the differences between your local and remote repos." >> menu.txt
+echo -e "${WHITE}7. replace will replace a pattern in a file with a new chosen pattern." >> menu.txt
 cat menu.txt
 
 #inorms you if the local repo is up to date with the remote repo
@@ -25,7 +26,7 @@ function same () {
     else
         echo -e "${WHITE}Local Repo is not up to date with remote repo"
     fi
-    read -p -e " ${GREEN}Would you like to see the differences in commits between repos? (Y/N) " ans
+    read -p "Would you like to see the differences in commits between repos? (Y/N) " ans
     if [ $ans == "Y" ] 
     then 
         echo "Here is your status: "
@@ -87,6 +88,14 @@ function diffs () {
     fi
 }
 
+function replace () {
+
+    read -p "File you wish to modify (must be in current directory): " file
+    read -p "Word you wish to replace: "old
+    read -p "Word you wish to replace with: "new
+    sed "s/${old}/${new}/g" "$file" > "M.$file"
+}
+
 read -p "What would you like to do? " ans
 if [ $ans == "same" ]
 then
@@ -106,6 +115,7 @@ then
 elif [ $ans == "diffs" ] 
 then
     diffs
-else:
-    echo "$ans is an invalid input"
+elif [ $ans == "replace" ]
+then
+    replace
 fi
