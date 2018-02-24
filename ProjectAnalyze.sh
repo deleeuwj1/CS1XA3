@@ -15,33 +15,30 @@ function isUpToDate () {
 
 function uncommittedChanges () {
     git diff > changes.log
+    read -p "Would you like to view the contents of changes.log? (Y/N)" ans
+    if [ $ans == "Y" ]
+    then
+        cat changes.log
+    fi
 }
 
 function findTODO () {
     grep -r -e "#TODO" --exclude="todo.log" --exclude="ProjectAnalyze.sh" > todo.log 
+    read -p "Would you like to view the contents of todo.log? (Y/N)" ans
+    if [ $ans == "Y" ]
+    then
+        cat todo.log
+    fi
 }
 
 #checks all haskell files for syntax errors and puts the results into error.log
 function haskellErrors () {
-    find -name "*.hs" | xargs -I {} ghc -fno-code {} &> error.log   
-}
-
-#moves up n number of directories
-function moveUp () {
-    read -p "Would you like to move up directories? (Y/N)" ans
+    find -name "*.hs" | xargs -I {} ghc -fno-code {} &> error.log
+    read -p "Would you like to view the contents of error.log? (Y/N)" ans
     if [ $ans == "Y" ]
     then 
-        read -p "How many directories would you like to move up?" num
-        i=1
-        d=$PWD
-        while [ $i -le $num ]
-        do
-	    d=$d/..
-            echo $d
-            (( i++ ))
-        done
-        cd "$d"
-    fi   
+        cat error.log
+    fi  
 }
 
 function findAndGo () {
