@@ -1,13 +1,17 @@
 #!/bin/bash
 
+#colour variables
+GREEN='\033[0;32m'
+WHITE='\033[1;37m'
+
 #building a menu for user experience
-echo "Here are your options:" > menu.txt
-echo "1. same will tell you if your local and remote repos are up to date (if any commits have not been pushed)." >> menu.txt
-echo "2. changes will tell you if what changes have been made since your last commit." >> menu.txt
-echo "3. todo will show you all lines containing the tag #TODO." >> menu.txt
-echo "4. haskellErrors will show you syntax errors in all Haskell files." >> menu.txt
-echo "5. move will move a file from anywhere into your current directory." >> menu.txt
-echo "6. diffs will show you the differences between your Local and Remote Repos." >> menu.txt
+echo -e "${GREEN}Here are your options:" > menu.txt
+echo -e "${WHITE}1. same will tell you if your local and remote repos are up to date (if any commits have not been pushed)." >> menu.txt
+echo -e "${WHITE}2. changes will tell you if what changes have been made since your last commit." >> menu.txt
+echo -e "${WHITE}3. todo will show you all lines containing the tag #TODO." >> menu.txt
+echo -e "${WHITE}4. haskellErrors will show you syntax errors in all Haskell files." >> menu.txt
+echo -e "${WHITE}5. move will move a file from anywhere into your current directory." >> menu.txt
+echo -e "${WHITE}6. diffs will show you the differences between your Local and Remote Repos." >> menu.txt
 cat menu.txt
 
 #inorms you if the local repo is up to date with the remote repo
@@ -17,9 +21,15 @@ function same () {
     remoteRepo=$(git rev-parse origin/master)
     if [ $localRepo == $remoteRepo ]
     then
-        echo "Local Repo is up to date with Remote Repo"
+        echo -e "${WHITE}Local Repo is up to date with remote repo"
     else
-        echo "Local Repo is not up to date with Remote Repo"
+        echo -e "${WHITE}Local Repo is not up to date with remote repo"
+    fi
+    read -p -e " ${GREEN}Would you like to see the differences in commits between repos? (Y/N) " ans
+    if [ $ans == "Y" ] 
+    then 
+        echo "Here is your status: "
+        git status master
     fi    
 }
 
@@ -28,6 +38,7 @@ function changes () {
     read -p "Would you like to view the contents of changes.log? (Y/N) " ans
     if [ $ans == "Y" ]
     then
+        echo -e "${GREEN}Here is changes.log: "
         cat changes.log
     fi
 }
@@ -37,6 +48,7 @@ function todo () {
     read -p "Would you like to view the contents of todo.log? (Y/N) " ans
     if [ $ans == "Y" ]
     then
+        echo -e "${GREEN}Here is todo.log: "
         cat todo.log
     fi
 }
@@ -47,6 +59,7 @@ function haskellErrors () {
     read -p "Would you like to view the contents of error.log? (Y/N) " ans
     if [ $ans == "Y" ]
     then 
+        echo -e "${GREEN}Here is error.log: "
         cat error.log
     fi  
 }
