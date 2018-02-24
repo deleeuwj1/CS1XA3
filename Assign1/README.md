@@ -24,6 +24,7 @@
 ## Other Additions:
    - menu: a simple menu was added for ease of use.
    - colours: colours were added for *slightly* improved readability of outputs.
+     - Information on changing the colour of output of echo from [here](https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux) 
    - Features included in functions:
       - Option for the user to see differences in commits between local and remote repos.
       - Option for user to view **changes.log**, **todo.log**, **error.log** or **diffs.log** after running the respective function.
