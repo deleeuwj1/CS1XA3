@@ -56,11 +56,13 @@ function findAndGo () {
 
 }
 
-function differences () {
+function reminderOfDiffs () {
     read -p "Would you like to see the differences between your Local and Remote Repos? (Y/N)" ans
     if [ $ans == "Y" ]
     then
-        echo $(git diff HEAD..origin/master)
+        d=$"git diff origin/master master"
+        $d &> diffs.log
+        cat diffs.log
     fi
 }
 "$@"
