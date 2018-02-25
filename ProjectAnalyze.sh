@@ -109,20 +109,25 @@ function newDir () {
         read -p "What would you like to name your directory? " name
     	mkdir $name
     	touch $name/README.md 
+        echo "# This is README for $name" >> $name/README.md
         read -p "Would you like to add anything to the README file? (Y/N) " a
-        if [ $a == "Y" ]
-        then
+        while [ $a != "N" ]
+        do
             read -p "Please enter your comment: " comm
-            echo "$comm" >> $name/README.md  
-        fi
-    	echo "# This is the README for $name" >> $name/README.md
+            echo -e "$comm\n" >> $name/README.md 
+            read -p "Would you like to add anything more? (Y/N) " a
+        done
     	today=`date +%Y-%m-%d`
     	echo "This file was created on $today" >> $name/README.md
    	git add $name/README.md
     	git add $name
     	git commit "$name" -m "Created $name"
-    	git push
-    	echo -e "${GREEN}$name has now been pushed."
+        if [[ "$(git push --porcelain)" == *"Done"*  ]]
+        then
+    	    echo -e "${GREEN}$name has now been pushed."
+        else
+            echo -e "${GREEN} Push failed."
+        fi
     else
         echo -e "${GREEN}A directory will not be created."
     fi
