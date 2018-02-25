@@ -49,7 +49,7 @@ function changes () {
 
 #find every line containing the tag #TODO and outputs the results to todo.log
 function todo () {
-    grep -r -e "#TODO" --exclude="todo.log" --exclude="ProjectAnalyze.sh" > todo.log 
+    grep -r -e "#TODO" --exclude={todo,changes,error}.log --exclude="ProjectAnalyze.sh" --exclude="menu.txt" > todo.log 
     read -p "Would you like to view the contents of todo.log? (Y/N) " ans
     if [ $ans == "Y" ]
     then
