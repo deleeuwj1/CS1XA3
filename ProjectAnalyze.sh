@@ -14,6 +14,7 @@ echo -e "${WHITE}5. move will move a file from anywhere into your current direct
 echo -e "${WHITE}6. diffs will show you the differences between your local and remote repos." >> menu.txt
 echo -e "${WHITE}7. replace will replace a pattern in a file with a new chosen pattern." >> menu.txt
 echo -e "${WHITE}8. newDir will create a directory containing a README.md file and push the directory to GitHub." >> menu.txt
+echo -e "${WHITE}9. newFile will create a file and let the user add text to it without opening an editor." >> menu.txt
 cat menu.txt
 
 #inorms you if the local repo is up to date with the remote repo
@@ -107,30 +108,65 @@ function newDir () {
     if [ $ans == "Y" ] 
     then 
         read -p "What would you like to name your directory? " name
-    	mkdir $name
-    	touch $name/README.md 
-        echo "# This is README for $name" >> $name/README.md
-        read -p "Would you like to add anything to the README file? (Y/N) " a
-        while [ $a != "N" ]
-        do
-            read -p "Please enter your comment: " comm
-            echo -e "$comm\n" >> $name/README.md 
-            read -p "Would you like to add anything more? (Y/N) " a
-        done
-    	today=`date +%Y-%m-%d`
-    	echo "This file was created on $today" >> $name/README.md
-   	git add $name/README.md
-    	git add $name
-    	git commit "$name" -m "Created $name"
-        if [[ "$(git push --porcelain)" == *"Done"*  ]]
+        if [ ! -d $name ]
         then
-    	    echo -e "${GREEN}$name has now been pushed."
+            mkdir $name
+    	    touch $name/README.md 
+            echo "# This is README for $name" >> $name/README.md
+            read -p "Would you like to add anything to the README file? (Y/N) " a
+            while [ $a != "N" ]
+            do
+                read -p "Please enter text: " comm
+                echo -e "$comm\n" >> $name/README.md 
+                read -p "Would you like to add anything more? (Y/N) " a
+            done
+    	    today=`date +%Y-%m-%d`
+    	    echo "This file was created on $today" >> $name/README.md
+   	    git add $name/README.md
+    	    git add $name
+    	    git commit "$name" -m "Created $name"
+            if [[ "$(git push --porcelain)" == *"Done"*  ]]
+            then
+    	        echo -e "${GREEN}$name has now been pushed."
+            else
+                echo -e "${GREEN} Push failed."
+            fi
         else
-            echo -e "${GREEN} Push failed."
+            echo -e "${GREEN}A directory of that name already exists." 
         fi
     else
         echo -e "${GREEN}A directory will not be created."
     fi
+}
+
+#creates a file and lets the user add text to it all in one go!
+function newFile () {
+    read -p "Would you like to create a new file? (Y/N) " ans
+    if [ $ans == "Y" ]
+    then 
+        read -p "What will the file be called? (Please include the extension) " name
+        if ! [[ ./${name} ]]
+        then
+            touch $name
+            read -p "Would you like to add anything to $name? (Y/N) " a
+            while [ $a != "N" ]
+            do
+                read -p "Please enter text: " comm
+                echo -e "$comm\n" >> $name
+                read -p "Would you like to add another line? (Y/N) " a
+            done
+            read -p "Would you like to view $name? (Y/N) " n
+            if [ $n == "Y" ]
+            then
+                cat $name
+            fi
+        else
+            echo -e "${GREEN}$name already exists."
+        fi
+    else
+        echo -e "${GREEN}No file has been created."
+    fi
+
 }
 
 read -p "What would you like to do? Enter a number: " ans
@@ -158,4 +194,7 @@ then
 elif [ $ans == "8" ]
 then
     newDir
+elif [ $ans == "9" ]
+then
+    newFile
 fi
