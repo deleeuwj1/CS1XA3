@@ -15,7 +15,7 @@ Due on February 26th, 2018.
    - diffs: when run, creates and displays a file **diffs.log** that shows the differences between the user's local and remote repositories.
    - move: modified version of **findFile** from [Jeffery Gibson's Project](https://github.com/gibsoj12/CS1XA3/blob/master/ProjectAnalyze.sh/). 
       - move finds the user's file and moves it to the current directory. This is useful when an existing file is needed in the current dictory, but is currently in          a subdirectory. This saves the user some time, as they don't need to figure out where the file is, or copy it manually.
-      - `find` `` `pwd` `` `-name` command was found [here](https://stackoverflow.com/questions/246215/how-can-i-list-files-with-their-absolute-path-in-linux).
+      - `find \`pwd\` -name` command was found [here](https://stackoverflow.com/questions/246215/how-can-i-list-files-with-their-absolute-path-in-linux).
       - Information on copying from [here](https://askubuntu.com/questions/835657/copy-file-to-current-directory).
    - replace: as seen in **Replace.sh** in [Akram Elwazani's Project](https://github.com/elwazana/CS1XA3/blob/master/Assign1/Replace.sh).
       - This function is one that I found used when writing my script. The ability to replace a re-occuring pattern with another is very useful when trying to change         a large portion of code makes the process a lot less arduous.  
@@ -31,4 +31,4 @@ Due on February 26th, 2018.
       - Option for the user to see differences in commits between local and remote repos.
       - Option for user to view **changes.log**, **todo.log** or **error.log** after running the respective function.
 
-Information on formatting .md files was found [here](https://help.github.com/articles/basic-writing-and-formatting-syntax/#headings).
+**Information on formatting .md files was found [here](https://help.github.com/articles/basic-writing-and-formatting-syntax/#headings).**
