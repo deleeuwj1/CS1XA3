@@ -21,7 +21,8 @@ Due on February 26th, 2018.
       - This function is one that I found used when writing my script. The ability to replace a re-occuring pattern with another is very useful when trying to change         a large portion of code makes the process a lot less arduous.  
    - newDir : modified version of **Bonus Feature 2** from [Ali Kariapper's Project](https://github.com/Kariappa/CS1XA3/blob/master/Assign1/ProjectAnalyze.sh)
       - This function is one that is useful for people that want to create a new directory with a README.md file, and add it to GitHub, but don't want to do all of  
-        the steps individually. With one command and a couple lines depicting what they want their directory to be called, and if they want to put anything in their          README file, the user is able to do all of this. 
+        the steps individually. With one command and a couple lines depicting what they want their directory to be called, and if they want to put anything in their          README file, the user is able to do all of this.
+      - The function will also tell the user if their push to GitHub was successful. 
 ## Other Additions:
    - menu: a simple menu was added for ease of use.
    - colours: colours were added for *slightly* improved readability of outputs.
