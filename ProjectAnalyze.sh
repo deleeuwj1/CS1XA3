@@ -13,6 +13,7 @@ echo -e "${WHITE}4. haskellErrors will show you syntax errors in all Haskell fil
 echo -e "${WHITE}5. move will move a file from anywhere into your current directory." >> menu.txt
 echo -e "${WHITE}6. diffs will show you the differences between your local and remote repos." >> menu.txt
 echo -e "${WHITE}7. replace will replace a pattern in a file with a new chosen pattern." >> menu.txt
+echo -e "${WHITE}8. newDir will create a directory containing a README.md file and push the directory to GitHub." >> menu.txt
 cat menu.txt
 
 #inorms you if the local repo is up to date with the remote repo
@@ -34,6 +35,7 @@ function same () {
     fi    
 }
 
+#shows the user any changes that have been made since the last commit
 function changes () {
     git diff > changes.log
     read -p "Would you like to view the contents of changes.log? (Y/N) " ans
@@ -44,6 +46,7 @@ function changes () {
     fi
 }
 
+#find every line containing the tag #TODO and outputs the results to todo.log
 function todo () {
     grep -r -e "#TODO" --exclude="todo.log" --exclude="ProjectAnalyze.sh" > todo.log 
     read -p "Would you like to view the contents of todo.log? (Y/N) " ans
@@ -65,6 +68,7 @@ function haskellErrors () {
     fi  
 }
 
+#finds a file that the user wished to see and moves it to the user's current directory
 function move () {
     read -p "Enter the name of the file you wish to find: " fileName
     if [ $(find . -name "$fileName" -type f | wc -l) -gt 0 ]
@@ -78,6 +82,7 @@ function move () {
 
 }
 
+#shows the user the differences between their local and remote repositories
 function diffs () {
     read -p "Would you like to see the differences between your Local and Remote Repos? (Y/N) " ans
     if [ $ans == "Y" ]
@@ -88,34 +93,64 @@ function diffs () {
     fi
 }
 
+#takes a file and pattern and replaces the pattern with a new one
 function replace () {
-
     read -p "File you wish to modify (must be in current directory): " file
     read -p "Word you wish to replace: "old
     read -p "Word you wish to replace with: "new
     sed "s/${old}/${new}/g" "$file" > "M.$file"
 }
 
-read -p "What would you like to do? " ans
-if [ $ans == "same" ]
+#adds, commits and pushes a new directory to GitHub with a README.md file that contains the date the directory was created
+function newDir () {
+    read -p "Would you like to create a directory? (Y/N) " ans
+    if [ $ans == "Y" ] 
+    then 
+        read -p "What would you like to name your directory? " name
+    	mkdir $name
+    	touch $name/README.md 
+        read -p "Would you like to add anything to the README file? (Y/N) " a
+        if [ $a == "Y" ]
+        then
+            read -p "Please enter your comment: " comm
+            echo "$comm" >> $name/README.md  
+        fi
+    	echo "# This is the README for $name" >> $name/README.md
+    	today=`date +%Y-%m-%d`
+    	echo "This file was created on $today" >> $name/README.md
+   	git add $name/README.md
+    	git add $name
+    	git commit "$name" -m "Created $name"
+    	git push
+    	echo -e "${GREEN}$name has now been pushed."
+    else
+        echo -e "${GREEN}A directory will not be created."
+    fi
+}
+
+read -p "What would you like to do? Enter a number: " ans
+if [ $ans == "1" ]
 then
     same
-elif [ $ans == "changes" ]
+elif [ $ans == "2" ]
 then
     changes
-elif [ $ans == "todo" ] 
+elif [ $ans == "3" ] 
 then
     todo
-elif [ $ans == "haskellErrors" ] 
+elif [ $ans == "4" ] 
 then
     haskellErrors
-elif [ $ans == "move" ]
+elif [ $ans == "5" ]
 then
     move
-elif [ $ans == "diffs" ] 
+elif [ $ans == "6" ] 
 then
     diffs
-elif [ $ans == "replace" ]
+elif [ $ans == "7" ]
 then
     replace
+elif [ $ans == "8" ]
+then
+    newDir
 fi
