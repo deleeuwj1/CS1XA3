@@ -165,7 +165,6 @@ function newFile () {
     else
         echo -e "${GREEN}No file has been created."
     fi
-
 }
 
 cont="C"
