@@ -15,7 +15,6 @@ echo -e "${WHITE}6. diffs will show you the differences between your local and r
 echo -e "${WHITE}7. replace will replace a pattern in a file with a new chosen pattern." >> menu.txt
 echo -e "${WHITE}8. newDir will create a directory containing a README.md file and push the directory to GitHub." >> menu.txt
 echo -e "${WHITE}9. newFile will create a file and let the user add text to it without opening an editor." >> menu.txt
-cat menu.txt
 
 #inorms you if the local repo is up to date with the remote repo
 function same () {
@@ -38,8 +37,8 @@ function same () {
 
 #shows the user any changes that have been made since the last commit
 function changes () {
-    git diff > changes.log
-    read -p "Would you like to view the contents of changes.log? (Y/N) " ans
+    git diff > changes.log #outputs results of git diff to changes.log
+    read -p "Would you like to view the contents of changes.log? (Y/N) " ans #allows user to view changes.log if they wish to
     if [ $ans == "Y" ]
     then
         echo -e "${GREEN}Here is changes.log: "
@@ -49,8 +48,8 @@ function changes () {
 
 #find every line containing the tag #TODO and outputs the results to todo.log
 function todo () {
-    grep -r -e "#TODO" --exclude={todo,changes,error}.log --exclude="ProjectAnalyze.sh" --exclude="menu.txt" > todo.log 
-    read -p "Would you like to view the contents of todo.log? (Y/N) " ans
+    grep -r -e "#TODO" --exclude="*.log" --exclude="ProjectAnalyze.sh" --exclude="menu.txt" > todo.log #excludes some files that won't contain actual TODO messages
+    read -p "Would you like to view the contents of todo.log? (Y/N) " ans #allows the user to view todo.log if they wish to
     if [ $ans == "Y" ]
     then
         echo -e "${GREEN}Here is todo.log: "
@@ -60,8 +59,8 @@ function todo () {
 
 #checks all haskell files for syntax errors and puts the results into error.log
 function haskellErrors () {
-    find -name "*.hs" | xargs -I {} ghc -fno-code {} &> error.log
-    read -p "Would you like to view the contents of error.log? (Y/N) " ans
+    find -name "*.hs" | xargs -I {} ghc -fno-code {} &> error.log #checks haskell files for errors and outputs results into error.log
+    read -p "Would you like to view the contents of error.log? (Y/N) " ans #allows the user to view error.log if they wish to
     if [ $ans == "Y" ]
     then 
         echo -e "${GREEN}Here is error.log: "
@@ -72,10 +71,10 @@ function haskellErrors () {
 #finds a file that the user wished to see and moves it to the user's current directory
 function move () {
     read -p "Enter the name of the file you wish to find: " fileName
-    if [ $(find . -name "$fileName" -type f | wc -l) -gt 0 ]
+    if [ $(find . -name "$fileName" -type f | wc -l) -gt 0 ] #looks through all sub-directories and moves the file to the current directory
     then
-        fileLocation=$(find `pwd` -name $fileName)
-        cp -v $fileLocation .
+        fileLocation=$(find `pwd` -name $fileName) 
+        cp -v $fileLocation .  #moves the file from it's location into the current directory
         echo "Your file in now in $PWD"
     else
         echo "$fileName does not exist"
@@ -88,7 +87,7 @@ function diffs () {
     read -p "Would you like to see the differences between your Local and Remote Repos? (Y/N) " ans
     if [ $ans == "Y" ]
     then
-        d=$"git diff origin/master master"
+        d=$"git diff origin/master master" #shows differences between repos, even if those differences have not been committed
         $d &> diffs.log
         cat diffs.log
     fi
@@ -99,7 +98,7 @@ function replace () {
     read -p "File you wish to modify (must be in current directory): " file
     read -p "Word you wish to replace: "old
     read -p "Word you wish to replace with: "new
-    sed "s/${old}/${new}/g" "$file" > "M.$file"
+    sed "s/${old}/${new}/g" "$file" > "M.$file" #replaces old with new in a file of the user's choosing
 }
 
 #adds, commits and pushes a new directory to GitHub with a README.md file that contains the date the directory was created
@@ -108,7 +107,7 @@ function newDir () {
     if [ $ans == "Y" ] 
     then 
         read -p "What would you like to name your directory? " name
-        if [ ! -d $name ]
+        if [ ! -d $name ] #this only searches through the current directory to see if it exists
         then
             mkdir $name
     	    touch $name/README.md 
@@ -116,8 +115,8 @@ function newDir () {
             read -p "Would you like to add anything to the README file? (Y/N) " a
             while [ $a != "N" ]
             do
-                read -p "Please enter text: " comm
-                echo -e "$comm\n" >> $name/README.md 
+                read -p "Please enter text: " txt
+                echo -e "$txt\n" >> $name/README.md #adds each entry onto it's own line
                 read -p "Would you like to add anything more? (Y/N) " a
             done
     	    today=`date +%Y-%m-%d`
@@ -125,14 +124,14 @@ function newDir () {
    	    git add $name/README.md
     	    git add $name
     	    git commit "$name" -m "Created $name"
-            if [[ "$(git push --porcelain)" == *"Done"*  ]]
+            if [[ "$(git push --porcelain)" == *"Done"*  ]] #determines if the push to GitHub was successful or not
             then
     	        echo -e "${GREEN}$name has now been pushed."
             else
                 echo -e "${GREEN} Push failed."
             fi
         else
-            echo -e "${GREEN}A directory of that name already exists." 
+            echo -e "${GREEN}A directory of that name already exists."
         fi
     else
         echo -e "${GREEN}A directory will not be created."
@@ -145,14 +144,14 @@ function newFile () {
     if [ $ans == "Y" ]
     then 
         read -p "What will the file be called? (Please include the extension) " name
-        if ! [[ ./${name} ]]
+        if ! [[ ./${name} ]] #this only looks through the current directory to see if the file name exists 
         then
             touch $name
             read -p "Would you like to add anything to $name? (Y/N) " a
             while [ $a != "N" ]
             do
-                read -p "Please enter text: " comm
-                echo -e "$comm\n" >> $name
+                read -p "Please enter text: " txt
+                echo -e "$txt\n" >> $name #adds each entry onto it's own line
                 read -p "Would you like to add another line? (Y/N) " a
             done
             read -p "Would you like to view $name? (Y/N) " n
@@ -169,32 +168,41 @@ function newFile () {
 
 }
 
-read -p "What would you like to do? Enter a number: " ans
-if [ $ans == "1" ]
-then
-    same
-elif [ $ans == "2" ]
-then
-    changes
-elif [ $ans == "3" ] 
-then
-    todo
-elif [ $ans == "4" ] 
-then
-    haskellErrors
-elif [ $ans == "5" ]
-then
-    move
-elif [ $ans == "6" ] 
-then
-    diffs
-elif [ $ans == "7" ]
-then
-    replace
-elif [ $ans == "8" ]
-then
-    newDir
-elif [ $ans == "9" ]
-then
-    newFile
-fi
+cont="C"
+while [ $cont != 'Q' ]
+do
+    cat menu.txt
+    read -p "What would you like to do? (Enter a number) " ans
+    if [ $ans == "1" ]
+    then
+        same
+    elif [ $ans == "2" ]
+    then
+        changes
+    elif [ $ans == "3" ] 
+    then
+        todo
+    elif [ $ans == "4" ] 
+    then
+        haskellErrors
+    elif [ $ans == "5" ]
+    then
+        move
+    elif [ $ans == "6" ] 
+    then
+        diffs
+    elif [ $ans == "7" ]
+    then
+        replace
+    elif [ $ans == "8" ]
+    then
+        newDir
+    elif [ $ans == "9" ]
+    then
+        newFile
+    else
+        echo "Invalid entry."
+    fi
+    echo -e "${WHITE}Would you like to quit (type Q) or continue (press any key)? "
+    read cont
+done
