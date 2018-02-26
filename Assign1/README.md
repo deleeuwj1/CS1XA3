@@ -10,13 +10,10 @@ Due on February 26th, 2018.
 
    - same: informs the user if their local repo is up to date with their remote repo.
       - **Used by typing in *1* after menu appears.**
-
    - changes: puts any changes since the user's last commit in changes.log.
       - **Used by typing in *2* when menu appears.**
-
    - todo: puts any line in this project with the tag **#TODO** in todo.log.
       - **Used by typing in *3* when menu appears.**
-
    - haskellErrors: puts all syntax errors from haskell files in error.log.
       - **Used by typing in *4* when menu appears.**
 
@@ -42,7 +39,9 @@ Due on February 26th, 2018.
       - This function is useful for users that want to quickly create simple files. 
       - This could be used when looking to create files for testing a function, creating simple README files, or writing a to-do list. This is also useful for people         who do not have a good text editor installed (such as Emacs).
       - `[[ ./file ]]`command, to check if the file already existed found [here](https://unix.stackexchange.com/questions/280614/how-to-use-file-test-to-check-if-a-file-already-exists-in-a-directory).
+
 ## Other Additions:
+
    - menu: a simple menu was added for ease of use.
    - colours: colours were added for *slightly* improved readability of outputs.
      - Information on changing the colour of output of echo from [here](https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux). 
