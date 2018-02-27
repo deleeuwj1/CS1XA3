@@ -21,7 +21,7 @@ Due on February 26th, 2018.
 
    - diffs: when run, creates and displays a file **diffs.log** that shows the differences between the user's local and remote repositories.
       - **Used by typing in *5* when menu appears.**
-   - move: modified version of **findFile** from [Jeffery Gibson's Project](https://github.com/gibsoj12/CS1XA3/blob/master/ProjectAnalyze.sh/). 
+   - move: modified version of **findFile** from [Jeffrey Gibson's Project](https://github.com/gibsoj12/CS1XA3/blob/master/ProjectAnalyze.sh/). 
       - **Used by typing in *6* when menu appears.**
       - move finds the user's file and moves it to the current directory. This is useful when an existing file is needed in the current dictory, but is currently in          a subdirectory. This saves the user some time, as they don't need to figure out where the file is, or copy it manually.
       - `find` `` `pwd` `` `-name` command was found [here](https://stackoverflow.com/questions/246215/how-can-i-list-files-with-their-absolute-path-in-linux).
