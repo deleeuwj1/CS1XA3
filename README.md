@@ -15,7 +15,7 @@ Session: Winter 2018
     5. Performs a variety of other functionalities.
 
 ## Assign2
-  - This directory contains code a simple game created in ELM.
+  - This directory contains code for a simple game created in ELM.
   - You can also also find a link to my resume there.
 
 ## Assign3
