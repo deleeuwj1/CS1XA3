@@ -1,10 +1,11 @@
-# README for Assignment 2
+# Description of Assignment 2
 
 Due on March 25th, 2018.
 
 ## Resume
 
    - If you would like to view my resume, click [here](http://ugweb.cas.mcmaster.ca/~deleeuwj).
+       - It is a modified version of the CV template created by [Xiaoying Riley](https://github.com/xriley/Orbit-Theme).
 
 ## ELM Web App
 
