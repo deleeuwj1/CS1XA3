@@ -159,13 +159,9 @@ view model =
           4 -> level4View model
           _ -> winScreen model
       else
-        if model.l == 5
-        then winScreen model
-        else
-          if model.p == Lose
-          then loseScreen model
-           else
-             mainMenu model
+        if model.p == Lose
+        then loseScreen model
+        else mainMenu model
 ----------------------------------------------------------------------
 
 elem = True
