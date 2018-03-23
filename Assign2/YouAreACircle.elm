@@ -13,6 +13,7 @@ import AnimationFrame as Anim
 import Mouse exposing (..)
 import List as List
 
+
 ----------------------------------------------------------------------
 
 type Outcome = Playing | Lose
@@ -21,8 +22,6 @@ type Msg = KeyMsg Int | ResetMsg
 type alias Rect = {x : Int, y : Int, w : Int, h : Int, i : Bool }
 
 ----------------------------------------------------------------------
-
-init = ({x = 625, y = 550, p = Playing, l = 0},Cmd.none)
 
 ----------------------------------------------------------------------
 
@@ -33,6 +32,8 @@ menuStyle = Attr.style [ ("color", "#1C82F7"),
 descriptionStyle = Attr.style [ ("color", "black"),
                                 ("font-size","18px"),
                                 ("text-align", "center")]
+
+divStyle = Attr.style [("height", "95%"), ("width", "95%")]
 
 mainMenu : Model -> Html.Html Msg
 mainMenu model = div [menuStyle]
@@ -59,7 +60,7 @@ level1View model = let
        posY = toString model.y
     in
      div [] [
-             svg [width "1250", height "640"]
+             svg [width "1250", height "645"]
                  [Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
                 , Svg.rect [x "475", y "200", rx "10", ry "10", width "300", height "200", fill "red"] [] ]
             ]
@@ -70,7 +71,7 @@ level2View model = let
        posY = toString model.y
     in
        div []
-           [ svg [width "1250", height "640"]
+           [ svg [width "1250", height "645"]
                  [ Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
                  , rect [x "350", y "300", rx "10", ry "10", width "200", height "150", fill "green"] []
                  , rect [x "670", y "300", rx "10", ry "10", width "200", height "150", fill "green"] []
@@ -84,7 +85,7 @@ level3View model = let
       posY = toString model.y
   in
     div []
-        [ svg [width "1250", height "640"]
+        [ svg [width "1250", height "645"]
               [ Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
               , rect [x "350", y "300", rx "10", ry "10", width "200", height "150", fill "blue"] []
               , rect [x "670", y "300", rx "10", ry "10", width "200", height "150", fill "blue"] []
@@ -102,7 +103,7 @@ level4View model = let
     posY = toString model.y
   in
     div []
-        [ svg [width "1250", height "640"]
+        [ svg [width "1250", height "645"]
               [  Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
               , rect [x "10", y "450", rx "10", ry "10", width "200", height "150", fill "red"] []
               , rect [x "170", y "220", rx "10", ry "10", width "200", height "150", fill "purple"] []
@@ -133,8 +134,8 @@ levelRects model =
          , { x = 675, y = 530, w = 200, h = 80, i = False }
          , { x = 40, y = 0, w = 200, h = 80, i = False }
          , { x = 275, y = 130, w = 200, h = 100, i = False }
-         , { x = 150, y = 530, w = 200, h = 90, i = False }
-         , { x = 550, y = 90, w = 200, h = 120, i = False }
+         , { x = 155, y = 530, w = 200, h = 90, i = False }
+         , { x = 350, y = 90, w = 200, h = 120, i = False }
          ]
 
     4 -> [ { x = 10, y = 450, w = 200, h = 150, i = False }
@@ -151,6 +152,13 @@ levelRects model =
          ]
 
     _ -> []
+
+
+----------------------------------------------------------------------
+
+--screenW = screen.availWidth
+init = ({x = 625, y = 550, p = Playing, l = 0},Cmd.none)
+
 ----------------------------------------------------------------------
 
 view : Model -> Html.Html Msg
@@ -163,15 +171,12 @@ view model =
           2 -> level2View model
           3 -> level3View model
           4 -> level4View model
-          _ -> winScreen model
+          5 -> winScreen model
+          _ -> mainMenu model
       else
-        if model.l == 5
-        then winScreen model
-        else
-          if model.p == Lose
-          then loseScreen model
-           else
-             mainMenu model
+        if model.p == Lose
+        then loseScreen model
+        else mainMenu model
 ----------------------------------------------------------------------
 
 elem = True
@@ -208,16 +213,24 @@ keyMsgUpdate keyCode model =
     then
       ({ x = model.x, y = model.y - 10, p = Playing, l = model.l},Cmd.none)
     else
-      if inRectsArea (levelRects model) model
+      if model.x <= -18
       then
-        ({ x = model.x, y = model.y, p = Lose, l = model.l},Cmd.none)
+        ({ x = model.x + 10, y = model.y, p = Playing, l = model.l},Cmd.none)
       else
-        case keyCode of
-          40 -> ({ x = model.x, y = model.y + 10, p = Playing, l = model.l},Cmd.none) -- up arrow
-          38 -> ({ x = model.x, y = model.y - 10, p = Playing, l = model.l},Cmd.none) -- down arrow
-          39 -> ({ x = model.x + 10, y = model.y, p = Playing, l = model.l},Cmd.none) -- left arrow
-          37 -> ({ x = model.x - 10, y = model.y, p = Playing, l = model.l},Cmd.none) -- right arrow
-          _  -> (model, Cmd.none)
+        if model.x >= 1240
+        then
+          ({ x = model.x - 10, y = model.y, p = Playing, l = model.l},Cmd.none)
+        else
+          if inRectsArea (levelRects model) model
+          then
+            ({ x = model.x, y = model.y, p = Lose, l = model.l},Cmd.none)
+          else
+            case keyCode of
+              40 -> ({ x = model.x, y = model.y + 10, p = Playing, l = model.l},Cmd.none) -- up arrow
+              38 -> ({ x = model.x, y = model.y - 10, p = Playing, l = model.l},Cmd.none) -- down arrow
+              39 -> ({ x = model.x + 10, y = model.y, p = Playing, l = model.l},Cmd.none) -- left arrow
+              37 -> ({ x = model.x - 10, y = model.y, p = Playing, l = model.l},Cmd.none) -- right arrow
+              _  -> (model, Cmd.none)
 
 ----------------------------------------------------------------------
 
