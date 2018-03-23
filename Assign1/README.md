@@ -1,4 +1,4 @@
-# README for Assignment 1
+# Description of Assignment 1
 Due on February 26th, 2018.
 
 ## Usage Information

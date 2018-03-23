@@ -16,7 +16,8 @@ Session: Winter 2018
 
 ## Assign2
   - This directory contains code for a simple game created in ELM.
-  - You can also also find a link to my resume there.
+     - You are a circle in a rectangular world. Try your best to escape! 
+  - The README.md file contains a link to my resume. Feel free to check it out. 
 
 ## Assign3
   - This directory will contain the code for Assignment 3.

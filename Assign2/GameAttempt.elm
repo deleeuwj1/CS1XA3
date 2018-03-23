@@ -1,4 +1,4 @@
-module ChangeGame exposing (..)
+module GameAttempt exposing (..)
 
 import Html exposing (..)
 import Html.Attributes as Attr
@@ -26,21 +26,32 @@ init = ({x = 625, y = 550, p = Playing, l = 0},Cmd.none)
 
 ----------------------------------------------------------------------
 
+menuStyle = Attr.style [ ("color", "#1C82F7"),
+                         ("font-size","100px"),
+                         ("text-align", "center")]
+
+descriptionStyle = Attr.style [ ("color", "black"),
+                                ("font-size","18px"),
+                                ("text-align", "center")]
 
 mainMenu : Model -> Html.Html Msg
-mainMenu model = div [outcomeStyle] [Html.text "Welcome!"
-           ,        br [] []
-           , button [onClick ResetMsg] [Html.text "Let's Play"] ]
+mainMenu model = div [menuStyle]
+                     [ p [menuStyle] [Html.text "Welcome!"]
+                     , p [descriptionStyle] [Html.text "You are a circle in a rectangular world. Try your best to escape!"]
+                     , p [descriptionStyle] [Html.text "Pro tip: the arrow keys help you run."]
+                     , button [onClick ResetMsg] [Html.text "Let's Play"] ]
 
 loseScreen : Model -> Html.Html Msg
-loseScreen model =  div [outcomeStyle] [Html.text "YOU LOST"
-                   , br [] []
-                   , button [onClick ResetMsg] [Html.text "Play Again"] ]
+loseScreen model =  div [menuStyle]
+                        [ p [menuStyle] [Html.text "YOU LOST!"]
+                        , p [descriptionStyle] [Html.text "Sucks to suck. The rectangles have eaten you alive."]
+                        , button [onClick ResetMsg] [Html.text "Play Again"] ]
 
 winScreen : Model -> Html.Html Msg
-winScreen model = div [outcomeStyle] [Html.text "YOU WON!"
-                 , br [] []
-                 , button [onClick ResetMsg] [Html.text "Play Again"]]
+winScreen model = div [menuStyle]
+                     [ p [menuStyle] [Html.text "YOU WON!"]
+                     , p [descriptionStyle] [Html.text "You sigh with relief and hope you don't have to go through it again."]
+                     , button [onClick ResetMsg] [Html.text "Play Again"]]
 
 level1View : Model -> Html.Html Msg
 level1View model = let
@@ -141,11 +152,6 @@ levelRects model =
 
     _ -> []
 ----------------------------------------------------------------------
-
-outcomeStyle = Attr.style [ ("color", "#1C82F7"),
-                            ("font-size","100px"),
-                            ("text-align", "center"),
-                            ("padding-top", "200px") ]
 
 view : Model -> Html.Html Msg
 view model =
