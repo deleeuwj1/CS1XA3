@@ -48,6 +48,30 @@ loseScreen model =  div [menuStyle]
                         , p [descriptionStyle] [Html.text "Sucks to suck. The rectangles have eaten you alive."]
                         , button [onClick ResetMsg] [Html.text "Play Again"] ]
 
+level1LoseScreen : Model -> Html.Html Msg
+level1LoseScreen model =  div [menuStyle]
+                              [ p [menuStyle] [Html.text "YOU LOST!"]
+                              , p [descriptionStyle] [Html.text "Level 1? Really? I thought better of you!"]
+                              , button [onClick ResetMsg] [Html.text "Play Again"] ]
+
+level2LoseScreen : Model -> Html.Html Msg
+level2LoseScreen model =  div [menuStyle]
+                              [ p [menuStyle] [Html.text "YOU LOST!"]
+                              , p [descriptionStyle] [Html.text "You were so close! (Yes, I'm just saying that to be nice.)"]
+                              , button [onClick ResetMsg] [Html.text "Play Again"] ]
+
+level3LoseScreen : Model -> Html.Html Msg
+level3LoseScreen model =  div [menuStyle]
+                              [ p [menuStyle] [Html.text "YOU LOST!"]
+                              , p [descriptionStyle] [Html.text "Sucks to suck. The rectangles have eaten you alive."]
+                              , button [onClick ResetMsg] [Html.text "Play Again"] ]
+
+level4LoseScreen : Model -> Html.Html Msg
+level4LoseScreen model =  div [menuStyle]
+                              [ p [menuStyle] [Html.text "YOU LOST!"]
+                              , p [descriptionStyle] [Html.text "You were so close! You can do this, I believe in you!"]
+                              , button [onClick ResetMsg] [Html.text "Play Again"] ]
+
 winScreen : Model -> Html.Html Msg
 winScreen model = div [menuStyle]
                      [ p [menuStyle] [Html.text "YOU WON!"]
@@ -60,9 +84,9 @@ level1View model = let
        posY = toString model.y
     in
      div [] [
-             svg [width "1250", height "645"]
+             svg [width "1250", height "645", Attr.align "center"]
                  [Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
-                , Svg.rect [x "475", y "200", rx "10", ry "10", width "300", height "200", fill "red"] [] ]
+                , Svg.rect [x "475", y "200", rx "5", ry "5", width "300", height "200", fill "red"] [] ]
             ]
 
 level2View : Model -> Html.Html Msg
@@ -71,11 +95,11 @@ level2View model = let
        posY = toString model.y
     in
        div []
-           [ svg [width "1250", height "645"]
+           [ svg [width "1250", height "645", Attr.align "center"]
                  [ Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
-                 , rect [x "350", y "300", rx "10", ry "10", width "200", height "150", fill "green"] []
-                 , rect [x "670", y "300", rx "10", ry "10", width "200", height "150", fill "green"] []
-                 , rect [x "475", y "130", rx "10", ry "10", width "200", height "80", fill "green"] []
+                 , rect [x "350", y "300", rx "5", ry "5", width "200", height "150", fill "green"] []
+                 , rect [x "670", y "300", rx "5", ry "5", width "200", height "150", fill "green"] []
+                 , rect [x "475", y "130", rx "5", ry "5", width "200", height "80", fill "green"] []
                  ]
            ]
 
@@ -85,15 +109,15 @@ level3View model = let
       posY = toString model.y
   in
     div []
-        [ svg [width "1250", height "645"]
+        [ svg [width "1250", height "645", Attr.align "center"]
               [ Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
-              , rect [x "350", y "300", rx "10", ry "10", width "200", height "150", fill "blue"] []
-              , rect [x "670", y "300", rx "10", ry "10", width "200", height "150", fill "blue"] []
-              , rect [x "675", y "530", rx "10", ry "10", width "200", height "80", fill "blue"] []
-              , rect [x "40", y "0", rx "10", ry "10", width "200", height "80", fill "blue"] []
-              , rect [x "275", y "130", rx "10", ry "10", width "200", height "100", fill "blue"] []
-              , rect [x "150", y "530", rx "10", ry "10", width "200", height "90", fill "blue"] []
-              , rect [x "550", y "90", rx "10", ry "10", width "200", height "120", fill "blue"] []
+              , rect [x "350", y "300", rx "5", ry "5", width "200", height "150", fill "blue"] []
+              , rect [x "670", y "300", rx "5", ry "5", width "200", height "150", fill "blue"] []
+              , rect [x "675", y "530", rx "5", ry "5", width "200", height "80", fill "blue"] []
+              , rect [x "40", y "0", rx "5", ry "5", width "200", height "80", fill "blue"] []
+              , rect [x "275", y "130", rx "5", ry "5", width "200", height "100", fill "blue"] []
+              , rect [x "150", y "530", rx "5", ry "5", width "200", height "90", fill "blue"] []
+              , rect [x "550", y "90", rx "5", ry "5", width "200", height "120", fill "blue"] []
               ]
         ]
 
@@ -103,19 +127,19 @@ level4View model = let
     posY = toString model.y
   in
     div []
-        [ svg [width "1250", height "645"]
+        [ svg [width "1250", height "645", Attr.align "center"]
               [  Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
-              , rect [x "10", y "450", rx "10", ry "10", width "200", height "150", fill "red"] []
-              , rect [x "170", y "220", rx "10", ry "10", width "200", height "150", fill "purple"] []
-              , rect [x "305", y "470", rx "10", ry "10", width "200", height "100", fill "green"] []
-              , rect [x "415", y "0", rx "10", ry "10", width "200", height "80", fill "blue"] []
-              , rect [x "250", y "100", rx "10", ry "10", width "200", height "100", fill "yellow"] []
-              , rect [x "670", y "530", rx "10", ry "10", width "200", height "90", fill "black"] []
-              , rect [x "620", y "40", rx "10", ry "10", width "200", height "120", fill "orange"] []
-              , rect [x "850", y "90", rx "10", ry "10", width "200", height "120", fill "pink"] []
-              , rect [x "1000", y "290", rx "10", ry "10", width "200", height "120", fill "gray"] []
-              , rect [x "600", y "360", rx "10", ry "10", width "300", height "120", fill "cyan"] []
-              , rect [x "550", y "200", rx "10", ry "10", width "200", height "120", fill "magenta"] []
+              , rect [x "10", y "450", rx "5", ry "5", width "200", height "150", fill "red"] []
+              , rect [x "170", y "220", rx "5", ry "5", width "200", height "150", fill "purple"] []
+              , rect [x "305", y "470", rx "5", ry "5", width "200", height "100", fill "green"] []
+              , rect [x "415", y "0", rx "5", ry "5", width "200", height "80", fill "blue"] []
+              , rect [x "250", y "100", rx "5", ry "5", width "200", height "100", fill "yellow"] []
+              , rect [x "670", y "530", rx "5", ry "5", width "200", height "90", fill "black"] []
+              , rect [x "620", y "40", rx "5", ry "5", width "200", height "120", fill "orange"] []
+              , rect [x "850", y "90", rx "5", ry "5", width "200", height "120", fill "pink"] []
+              , rect [x "1000", y "290", rx "5", ry "5", width "200", height "120", fill "gray"] []
+              , rect [x "600", y "360", rx "5", ry "5", width "300", height "120", fill "cyan"] []
+              , rect [x "550", y "200", rx "5", ry "5", width "200", height "120", fill "magenta"] []
               ]
          ]
 
@@ -134,8 +158,8 @@ levelRects model =
          , { x = 675, y = 530, w = 200, h = 80, i = False }
          , { x = 40, y = 0, w = 200, h = 80, i = False }
          , { x = 275, y = 130, w = 200, h = 100, i = False }
-         , { x = 155, y = 530, w = 200, h = 90, i = False }
-         , { x = 350, y = 90, w = 200, h = 120, i = False }
+         , { x = 150, y = 530, w = 200, h = 90, i = False }
+         , { x = 550, y = 90, w = 200, h = 120, i = False }
          ]
 
     4 -> [ { x = 10, y = 450, w = 200, h = 150, i = False }
@@ -175,7 +199,13 @@ view model =
           _ -> mainMenu model
       else
         if model.p == Lose
-        then loseScreen model
+        then
+          case model.l of
+            1 -> level1LoseScreen model
+            2 -> level2LoseScreen model
+            3 -> level3LoseScreen model
+            4 -> level4LoseScreen model
+            _ -> loseScreen model
         else mainMenu model
 ----------------------------------------------------------------------
 
@@ -209,15 +239,15 @@ keyMsgUpdate keyCode model =
   then
     ({ x = 625, y = 550, p = Playing, l = (model.l + 1)},Cmd.none)
   else
-    if model.y == 640
+    if model.y == 630
     then
       ({ x = model.x, y = model.y - 10, p = Playing, l = model.l},Cmd.none)
     else
-      if model.x <= -18
+      if model.x <= 28
       then
         ({ x = model.x + 10, y = model.y, p = Playing, l = model.l},Cmd.none)
       else
-        if model.x >= 1240
+        if model.x >= 1229
         then
           ({ x = model.x - 10, y = model.y, p = Playing, l = model.l},Cmd.none)
         else
