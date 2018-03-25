@@ -11,5 +11,5 @@ Due on March 25th, 2018.
 
    - You are a circle in a rectangular world. Try your best to escape! Get to the end to get out.
       - If you would like to play it, you can find it through my resume, under the Projects section.
-   - Unfortunately because of issues with ELM's Keyboard module, the game only works in Firefox. Hopefully an update will be released soon.
+      - A blue rectangle shows the area that the circle is allowed to travel within; this is for users on larger screens.
    - `valInList` function is a modified version of the `helper` function found [here](https://stackoverflow.com/questions/33625335/how-to-get-the-first-index-of-a-given-element-in-array-list-in-elm).

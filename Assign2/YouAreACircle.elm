@@ -42,6 +42,8 @@ mainMenu model = div [menuStyle]
                      , p [descriptionStyle] [Html.text "Pro tip: the arrow keys help you run."]
                      , button [onClick ResetMsg] [Html.text "Let's Play"] ]
 
+borderStyle = Attr.style [("border-style", "solid solid solid solid"), ("border-color", "#1C82F7")]
+
 loseScreen : Model -> Html.Html Msg
 loseScreen model =  div [menuStyle]
                         [ p [menuStyle] [Html.text "YOU LOST!"]
@@ -83,8 +85,8 @@ level1View model = let
        posX = toString model.x
        posY = toString model.y
     in
-     div [] [
-             svg [width "1250", height "645", Attr.align "center"]
+     div [Attr.align "center"]
+             [svg [width "1250", height "645", Attr.align "center", borderStyle]
                  [Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
                 , Svg.rect [x "475", y "200", rx "5", ry "5", width "300", height "200", fill "red"] [] ]
             ]
@@ -94,8 +96,8 @@ level2View model = let
        posX = toString model.x
        posY = toString model.y
     in
-       div []
-           [ svg [width "1250", height "645", Attr.align "center"]
+       div [Attr.align "center"]
+           [ svg [width "1250", height "645", Attr.align "center", borderStyle]
                  [ Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
                  , rect [x "350", y "300", rx "5", ry "5", width "200", height "150", fill "green"] []
                  , rect [x "670", y "300", rx "5", ry "5", width "200", height "150", fill "green"] []
@@ -108,8 +110,8 @@ level3View model = let
       posX = toString model.x
       posY = toString model.y
   in
-    div []
-        [ svg [width "1250", height "645", Attr.align "center"]
+    div [Attr.align "center"]
+        [ svg [width "1250", height "645", Attr.align "center", borderStyle]
               [ Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
               , rect [x "350", y "300", rx "5", ry "5", width "200", height "150", fill "blue"] []
               , rect [x "670", y "300", rx "5", ry "5", width "200", height "150", fill "blue"] []
@@ -126,8 +128,8 @@ level4View model = let
     posX = toString model.x
     posY = toString model.y
   in
-    div []
-        [ svg [width "1250", height "645", Attr.align "center"]
+    div [Attr.align "center"]
+        [ svg [width "1250", height "645", borderStyle]
               [  Svg.circle [cx posX, cy posY, r "30", fill "blue"] []
               , rect [x "10", y "450", rx "5", ry "5", width "200", height "150", fill "red"] []
               , rect [x "170", y "220", rx "5", ry "5", width "200", height "150", fill "purple"] []
@@ -265,7 +267,7 @@ keyMsgUpdate keyCode model =
 ----------------------------------------------------------------------
 
 subscriptions : Model -> Sub Msg
-subscriptions model = Keyboard.presses KeyMsg
+subscriptions model = Keyboard.downs KeyMsg
 
 ----------------------------------------------------------------------
 
