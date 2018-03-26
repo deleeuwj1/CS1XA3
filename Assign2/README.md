@@ -6,6 +6,7 @@ Due on March 25th, 2018.
 
    - If you would like to view my resume, click [here](http://ugweb.cas.mcmaster.ca/~deleeuwj).
        - It is a modified version of the CV template created by [Xiaoying Riley](https://github.com/xriley/Orbit-Theme).
+       - I removed the original profile container and added a header with an image on it. I also added multiple sectionsand fixed the icons for each of the sections.  
 
 ## ELM Web App
 
