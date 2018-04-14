@@ -4,6 +4,7 @@ import Data.Map as Map
 
 import ExprType
 import ExprDiff
+import ExprEval
 import ExprParser
 import ExprShow
 

@@ -62,39 +62,85 @@ module ExprEval where
      val = Const
      var :: String -> Expr a
      var = Var
-     -- this replaces eval, but is much slower than having an eval defined on it's own
-     --eval vrs expr = case simplify vrs expr of
-      --                 Const x -> x
-        --               _       -> error "Failed to fully eval expr"
 
   instance ExprEval Double where -- (Num a, Fractional a) =>
    eval vrs (Add e1 e2)  = (+) <$> (eval vrs e1) <*> (eval vrs e2)
    eval vrs (Sub e1 e2)  = (-) <$> (eval vrs e1) <*> (eval vrs e2)
    eval vrs (Mult e1 e2) = (*) <$> (eval vrs e1) <*> (eval vrs e2)
    eval vrs (Div e1 e2)  = case (eval vrs e1, eval vrs e2) of
-                             EvalError err -> err
+                             (_, EvalError err) -> EvalError err
                              (Result r1, Result r2) ->
-                               let res = (eval vrs e1) / (eval vrs e2)
-                                 in if (isNaN res) then EvalError "Zero Division Error" else  res
-   eval vrs (E e)        = exp (eval vrs e)
+                               let res = r1 / r2
+                                 in if (isNaN res) then EvalError "Zero Division Error" else Result res
+   eval vrs (E e)        = case (eval vrs e) of
+                             EvalError err -> EvalError err
+                             Result r -> Result (exp r)
    eval vrs (Log a e)    = case (eval vrs e) of
                             EvalError err -> EvalError err
                             Result r -> if a > 0 then Result (logBase a r) else EvalError "Base must be greater than 0"
    eval vrs (Ln e)       = case (eval vrs e) of
                             EvalError err -> EvalError err
-                            Result r -> log (eval vrs e)
-   eval vrs (Cos e)      = cos (eval vrs e)
-   eval vrs (Sin e)      = sin (eval vrs e)
+                            Result r -> Result (log r)
+   eval vrs (Cos e)      = case (eval vrs e) of
+                            EvalError err -> EvalError err
+                            Result r -> Result (cos r)
+   eval vrs (Sin e)      = case (eval vrs e) of
+                            EvalError err -> EvalError err
+                            Result r -> Result (sin r)
    eval vrs (Pow e1 e2)  = case (eval vrs e1, eval vrs e2) of
                              (Result r1, Result r2) ->
                                 let res = r1 ** r2
                                   in if (isInfinity res) then EvalError "Invalid operands" else Result res
                              (_, EvalError err) -> EvalError err
-   eval vrs (Const x) = Result x
-   eval vrs (Var v) = case Map.lookup v vrs of
-                        Just x -> Result x
-                        Nothing -> error "Lookup failed in eval"
-   simplify _ e = e -- #TODO
+   eval vrs (Const x)    = Result x
+   eval vrs (Var v)      = case Map.lookup v vrs of
+                             Just x -> Result x
+                             Nothing -> error "Lookup failed in eval"
+
+   {- simplify expression -}
+   --addition
+   simplify vrs (Add e (Var x)) = case Map.lookup x vrs of
+                                    Just v  -> (Add (simplify vrs e) (Const v))
+                                    Nothing -> (Add (simplify vrs e) (Var x))
+   simplify vrs (Add (Var x) e) = simplify vrs (Add e (Var x))
+   simplify vrs (Add e1 e2)     = Add (simplify vrs e1) (simplify vrs e2)
+
+   --subtraction
+   simplify vrs (Sub e (Var x)) = case Map.lookup x vrs of
+                                    Just v  -> (Sub (simplify vrs e) (Const v))
+                                    Nothing -> (Sub (simplify vrs e) (Var x))
+   simplify vrs (Sub (Var x) e) = case Map.lookup x vrs of
+                                    Just v  -> (Sub (Const v) (simplify vrs e))
+                                    Nothing -> (Sub (Var x) (simplify vrs e))
+   simplify vrs (Sub e1 e2)     = Sub (simplify vrs e1) (simplify vrs e2)
+
+   -- multiplication
+   simplify vrs (Mult e (Var x)) = case Map.lookup x vrs of
+                                    Just v  -> (Mult (simplify vrs e) (Const v))
+                                    Nothing -> (Mult (simplify vrs e) (Var x))
+   simplify vrs (Mult (Var x) e) = simplify vrs (Mult e (Var x))
+   simplify vrs (Mult e1 e2)     = Mult (simplify vrs e1) (simplify vrs e2)
+
+   -- division
+   simplify vrs (Div e (Var x))       = case Map.lookup x vrs of
+                                          Just v  -> (Div (simplify vrs e) (Const v))
+                                          Nothing -> (Div (simplify vrs e) (Var x))
+   simplify vrs (Div (Var a) (Var b)) = case (Map.lookup a vrs, Map.lookup b vrs) of
+                                          (Just x, Just y)   -> (Div (Const x) (Const y))
+                                          (Just x, _)        -> (Div (Const x) (Var b))
+                                          (_, Just y)        -> (Div (Var a) (Const y))
+                                          (Nothing, Nothing) -> if a == b
+                                                                then (Const 1)
+                                                                else (Div (Var a) (Var b))
+
+   simplify vrs (E e)        = e
+   simplify vrs (Log a e)    = e
+   simplify vrs (Ln e)       = e
+   simplify vrs (Cos e)      = e
+   simplify vrs (Sin e)      = e
+   simplify vrs (Pow e1 e2)  = e1
+   simplify vrs (Const x)    = Const x
+   simplify vrs (Var v)      = Var v
 
   isInfinity ::  Double -> Bool
   isInfinity e = let inf = show e
