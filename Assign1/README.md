@@ -1,4 +1,4 @@
-# Description of Assignment 1
+# Assignment 1: Project Analyzer
 Due on February 26th, 2018.
 
 ## Usage Information

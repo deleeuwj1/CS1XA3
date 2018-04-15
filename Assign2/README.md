@@ -1,4 +1,4 @@
-# Description of Assignment 2
+# Assignment 2: Resume and Game in ELM
 
 Due on March 25th, 2018.
 

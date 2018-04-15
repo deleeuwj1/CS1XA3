@@ -1,2 +1,12 @@
-# Description of Assignment 3
-Due Date: April 20, 2018
+# Assignment 3: Custom Haskell Math Library
+
+Due Date: April 20th, 2018.
+
+## Description
+
+
+## Functionalities
+
+
+### License
+

@@ -1,4 +1,4 @@
-# Jessica's CS1XA3 Repository
+# Jessica's COMPSCI 1XA3 Repository
 Course: COMPSCI 1XA3
 
 Instructor: Curtis D'Alves
