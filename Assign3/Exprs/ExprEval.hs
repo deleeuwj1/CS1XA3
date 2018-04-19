@@ -134,7 +134,18 @@ module ExprEval where
             (Log a e3, Log b e4)       -> if a == b
                                           then simplify vrs $ Log a (Mult (simplify vrs e3) (simplify vrs e4))
                                           else simplify vrs (Add (Log a (simplify vrs e3)) (Log b (simplify vrs e4)))
-            (x1, x2)                   -> Add x1 x2
+            (Mult (Const a) x1, Mult (Const b) x2) -> if x1 == x2
+                                                      then Mult (Const (a + b)) s1
+                                                      else Add (Mult (Const a) x1) (Mult (Const b) x2)
+            (Mult (Const a) x1, x2)    -> if x1 == x2
+                                          then Mult (Const (a + 1)) s2
+                                          else Add (Mult (Const a) x1) x2
+            (x1, Mult (Const a) x2)    -> if x1 == x2
+                                          then Mult (Const (a + 1)) s1
+                                          else Add (Mult (Const a) x2) x1
+            (x1, x2)                   -> if x1 == x2
+                                          then Mult (Const 2) x1
+                                          else Add x1 x2
 
      -- subtraction
      {-
@@ -180,7 +191,7 @@ module ExprEval where
          (Const a, Mult (Const b) e) -> Mult (Const (a * b)) e
          (Const a, e)                -> Mult (Const a) s2
          (e, Const a)                -> Mult (Const a) s1
-         (Var x, Var y)              -> if x <= y
+         (Var x, Var y)              -> if x < y
                                         then Mult (Var x) (Var y)
                                         else Mult (Var y) (Var x)
          (Var x, (Mult (Var y) e))   -> if x <= y

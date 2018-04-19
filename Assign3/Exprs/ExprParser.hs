@@ -1,6 +1,7 @@
 module ExprParser (parseExprD,parseExprF) where
 
   import ExprType
+  import ExprEval
 
   import Text.Parsec
   import Text.Parsec.String
@@ -17,13 +18,16 @@ module ExprParser (parseExprD,parseExprF) where
 
   exprD :: Parser (Expr Double)
   exprD = let
-    first = (parens exprD) <|> otherOps (parens exprD) <|> logOp <|> (parseVar <|> parseConstD)
+    first = (parens exprD) <|> otherOps (parens exprD) <|> logOpD (parens exprD) <|> (parseConstD <|> parseVar)
     negFirst = do { char '-';
                      f <- first;
-                     return $ Mult (Const (-1)) first }
-    second = (first <|> negFirst) `chainl` powOp
-    third = second `chainl` mulOp
-    in third `chainl` addOp
+                     return $ Mult (Const (-1)) f }
+    second = (first <|> negFirst) `chainl1` powOp
+    third = second `chainl1` mulOp
+    in third `chainl1` addOp
+
+  logOpD :: Parser (Expr Double) -> Parser (Expr Double)
+  logOpD e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ Log (read b) p }
 
   {- parsing floats -}
   parseExprF :: String -> Expr Float
@@ -37,13 +41,16 @@ module ExprParser (parseExprD,parseExprF) where
 
   exprF :: Parser (Expr Float)
   exprF = let
-    first = (parens exprF) <|> otherOps (parens exprF) <|> logOp <|> (parseVar <|> parseConstF)
+    first = (parens exprF) <|> otherOps (parens exprF) <|> logOpF (parens exprF) <|> (parseConstF <|> parseVar)
     negFirst = do { char '-';
                      f <- first;
-                     return $ Mult (Const (-1)) first }
-    second = (first <|> negFirst) `chainl` powOp
-    third = second `chainl` mulOp
-    in third `chainl` addOp
+                     return $ Mult (Const (-1)) f }
+    second = (first <|> negFirst) `chainl1` powOp
+    third = second `chainl1` mulOp
+    in third `chainl1` addOp
+
+  logOpF :: Parser (Expr Float) -> Parser (Expr Float)
+  logOpF e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ Log (read b) p }
 
   {- parsing integer -}
   parseExprI :: String -> Expr Integer
@@ -57,13 +64,16 @@ module ExprParser (parseExprD,parseExprF) where
 
   exprI :: Parser (Expr Integer)
   exprI = let
-    first = (parens exprI) <|> otherOps (parens exprI) <|> logOp <|> (parseVar <|> parseConstI)
+    first = (parens exprI) <|> otherOps (parens exprI) <|> logOpI (parens exprI) <|> (parseConstI <|> parseVar)
     negFirst = do { char '-';
                      f <- first;
-                     return $ Mult (Const (-1)) first }
-    second = (first <|> negFirst) `chainl` powOp
-    third = second `chainl` mulOp
-    in third `chainl` addOp
+                     return $ Mult (Const (-1)) f }
+    second = (first <|> negFirst) `chainl1` powOp
+    third = second `chainl1` mulOp
+    in third `chainl1` addOp
+
+  logOpI :: Parser (Expr Integer) -> Parser (Expr Integer)
+  logOpI e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ Log (read b) p }
 
   {- General parsers -}
 
@@ -72,24 +82,21 @@ module ExprParser (parseExprD,parseExprF) where
                   return (Var v) }
 
   powOp :: Parser (Expr a -> Expr a -> Expr a)
-  powOp = do { symbol "^"; return (!^) }
+  powOp = do { symbol "^"; return Pow }
 
   mulOp :: Parser (Expr a -> Expr a -> Expr a)
-  mulOp = do { symbol "*"; return (!*) }
-      <|> do { symbol "/"; return (!/) }
+  mulOp = do { symbol "*"; return Mult }
+      <|> do { symbol "/"; return Div }
 
   addOp :: Parser (Expr a -> Expr a -> Expr a)
-  addOp = do { symbol "+"; return (!+) }
-      <|> do { symbol "-"; return (!-) }
+  addOp = do { symbol "+"; return Add }
+      <|> do { symbol "-"; return Sub }
 
   otherOps :: Parser (Expr a) -> Parser (Expr a)
-  otherOps e1 = do { symbol "e"; p <- e1; return $ E p }
+  otherOps e1 = do { symbol "exp"; p <- e1; return $ E p }
             <|> do { symbol "ln"; p <- e1; return $ Ln p }
             <|> do { symbol "sin"; p <- e1; return $ Sin p }
             <|> do { symbol "cos"; p <- e1; return $ Cos p }
-
-  logOp :: Parser (Expr a) -> Parser (Expr a)
-  logOp e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ Log b p }
 
   {- Functions for all types -}
 
