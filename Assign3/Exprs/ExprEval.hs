@@ -114,23 +114,44 @@ module ExprEval where
                                Just x -> Result x
                                Nothing -> error "Lookup failed in eval"
 
-
      {- simplify expressions -}
      -- addition
-     simplify vrs (Add (Const 0) e)           = simplify vrs e
-     simplify vrs (Add e (Const 0))           = simplify vrs e
-     simplify vrs (Add e (Var x))             = Add (simplify vrs e) (Var x)
-     simplify vrs (Add (Var x) e)             = Add (Var x) (simplify vrs e)
-     simplify vrs (Add (Const a) (Const b))   = case (eval vrs (Add (Const a) (Const b))) of
-                                                  Result r      -> Const r
-                                                  EvalError err -> error err
-     simplify vrs (Add (Ln e1) (Ln e2))       = Ln (Mult (simplify vrs e1) (simplify vrs e2))
-     simplify vrs (Add (Log a e1) (Log b e2)) = if a ==b
-                                                then Log a (Mult (simplify vrs e1) (simplify vrs e2))
-                                                else (Add (Log a (simplify vrs e1)) (Log b (simplify vrs e1)))
-     simplify vrs (Add e1 e2)                 = Add (simplify vrs e1) (simplify vrs e2)
+     simplify vrs (Add e1 e2) = let
+       s1 = simplify vrs e1
+       s2 = simplify vrs e2
+       in case (s1, s2) of
+            (Const a, Const b)         -> Const (a + b)
+            (Const 0, e)               -> s2
+            (e, Const 0)               -> s1
+            (Const a, Add (Const b) e) -> simplify vrs $ Add (Const (a + b)) (simplify vrs e)
+            (Const a, e)               -> Add (Const a) s2
+            (e, Const a)               -> Add (Const a) s1
+            (e, Var x)                 -> Add s1 (Var x)
+            (Var x, e)                 -> Add s2 (Var x)
+            (x1, Mult (Const (-1)) x2) -> simplify vrs (Sub x1 x2)
+            (Ln e3, Ln e4)             -> simplify vrs $ Ln (Mult (simplify vrs e3) (simplify vrs e4))
+            (Log a e3, Log b e4)       -> if a == b
+                                          then simplify vrs $ Log a (Mult (simplify vrs e3) (simplify vrs e4))
+                                          else simplify vrs (Add (Log a (simplify vrs e3)) (Log b (simplify vrs e4)))
+            (x1, x2)                   -> Add x1 x2
 
      -- subtraction
+     {-
+     simplify vrs (Sub e1 e2) = let
+       s1 = simplify vrs e1
+       s2 = simplify vrs e2
+       in case (s1, s2) of
+           (Const a, Const b)   -> Const (a - b)
+           (e, Const 0)         -> s1
+           (Const a, e)         -> Sub s2 (Const a)
+           (e, Const a)         -> Sub s1 (Const a)
+           (e, Var x)           -> Sub (Var x) s1
+           (Var x, e)           -> Sub (Var x) s2
+           (Ln e3, Ln e4)       -> simplify vrs $ Ln (Mult (simplify vrs e3) (simplify vrs e4))
+           (Log a e3, Log b e4) -> if a == b
+                                   then simplify vrs $ Log a (Div (simplify vrs e3) (simplify vrs e4))
+                                   else simplify vrs (Sub (Log a (simplify vrs e3)) (Log b (simplify vrs e4)))
+-}
      simplify vrs (Sub e (Const 0))           = simplify vrs e
      simplify vrs (Sub e (Var x))             = Sub (simplify vrs e) (Var x)
      simplify vrs (Sub (Var x) e) = Sub (Var x) (simplify vrs e)
@@ -144,85 +165,126 @@ module ExprEval where
      simplify vrs (Sub e1 e2)                 = Sub (simplify vrs e1) (simplify vrs e2)
 
      -- multiplication
-     simplify vrs (Mult (Const 0) _)             = Const 0
-     simplify vrs (Mult _ (Const 0))             = Const 0
-     simplify vrs (Mult e (Var x))               = Mult (simplify vrs e) (Var x)
-     simplify vrs (Mult (Var x) e) = Mult (Var x) (simplify vrs e)
-     simplify vrs (Mult (Const 1) e)             = simplify vrs e
-     simplify vrs (Mult e (Const 1))             = simplify vrs e
-     simplify vrs (Mult (Const a) (Const b))     = case (eval vrs (Mult (Const a) (Const b))) of
-                                                      Result r      -> Const r
-                                                      EvalError err -> error err
-     simplify vrs (Mult (Pow e1 e2) (Pow x1 x2)) = if (simplify vrs e1) == (simplify vrs x1)
-                                                   then Pow (simplify vrs e1) (Add (simplify vrs e2) (simplify vrs x2))
-                                                   else (Mult (Pow (simplify vrs e1) (simplify vrs e2)) (Pow (simplify vrs x1) (simplify vrs x2)))
-     simplify vrs (Mult e1 e2)                   = Mult (simplify vrs e1) (simplify vrs e2)
+     simplify vrs (Mult e1 e2) = let
+       s1 = simplify vrs e1
+       s2 = simplify vrs e2
+       in case (s1, s2) of
+         (Const 0, _)                -> Const 0
+         (_, Const 0)                -> Const 0
+         (Const 1, e)                -> s2
+         (e, Const 1)                -> s1
+         (Const (-1), Const (-1))    -> Const 1
+         (Const (-1), Mult (Const (-1)) e) -> e
+         (Const a, Const b)          -> Const (a * b)
+         (Const a, Mult (Const b) e) -> Mult (Const (a * b)) e
+         (Const a, e)                -> Mult (Const a) s2
+         (e, Const a)                -> Mult (Const a) s1
+         (Var x, Var y)              -> if x <= y
+                                        then Mult (Var x) (Var y)
+                                        else Mult (Var y) (Var x)
+         (Var x, (Mult (Var y) e))   -> if x <= y
+                                        then Mult (Var x) (Mult (Var y) e)
+                                        else simplify vrs $ Mult (Var y) (Mult (Var x) e)
+         (Var x, e)                  -> Mult s2 (Var x)
+         (e, Var x)                  -> Mult s1 (Var x)
+         (Pow e1 e2, Pow x1 x2)      -> if e1 == x1
+                                        then Pow e1 (Add e2 x2)
+                                        else Mult (Pow e1 e2) (Pow x1 x2)
+         (x1, x2)                     -> Mult x1 x2
 
      -- division
-     simplify vrs (Div e (Const 1))         = simplify vrs e
-     simplify vrs (Div (Const 0) _)         = Const 0
-     simplify vrs (Div (Var x) (Var y))     = if x == y
-                                              then (Const 1)
-                                              else (Div (Var x) (Var y))
-     simplify vrs (Div e (Var x))           = Div (simplify vrs e) (Var x)
-     simplify vrs (Div (Var x) e)           = Div (Var x) (simplify vrs e)
-     simplify vrs (Div (Const a) (Const b)) = case (eval vrs (Div (Const a) (Const b))) of
-                                                Result r      -> Const r
-                                                EvalError err -> error err
-     simplify vrs (Div e1 e2)               = Div (simplify vrs e1) (simplify vrs e2)
+     simplify vrs (Div e1 e2) = let
+       s1 = simplify vrs e1
+       s2 = simplify vrs e2
+       in case (s1, s2) of
+            (e, Const 1)               -> s1
+            (Const 0, _)               -> Const 0
+            (Const a, Const b)         -> Const (a / b)
+            (Const a, Div (Const b) e) -> Div (Mult (Const a) e) (Const b)
+            (Var x, Var y)             -> if x == y
+                                          then Const 1
+                                          else Div (Var x) (Var y)
+            (Var x, e)                 -> Div (Var x) s2
+            (e, Var x)                 -> Div s1 (Var x)
+            (Const a, Ln e)            -> Mult (Const a) (Ln e)
+            (x1, Ln x2)                -> simplify vrs $ Mult (Ln x2) x1
+            (Pow e1 e2, Pow x1 x2)     -> if e1 == x1
+                                          then Pow e1 (Sub e2 x2)
+                                          else Div (Pow e1 e2) (Pow x1 x2)
+            (x1, x2)                   -> Div x1 x2
 
      -- natural exponent
-     simplify vrs (E (Const 0)) = Const 1
-     simplify vrs (E (Var x))   = E (Var x)
-     simplify vrs (E (Const a)) = case (eval vrs (E (Const a))) of
-                                    Result r      -> Const r
-                                    EvalError err -> error err
-     simplify vrs (E (Ln e))    = simplify vrs e
-     simplify vrs (E e)         = E (simplify vrs e)
+     simplify vrs (E e) = let
+       s = simplify vrs e
+       in case s of
+            (Const 0)         -> Const 1
+            (Const a)         -> case (eval vrs (E (Const a))) of
+                                   Result r      -> Const r
+                                   EvalError err -> E (Const a)
+            (Var x)           -> E (Var x)
+            (Ln x)            -> x
+            (Mult x1 (Ln x2)) -> Pow x2 x1
+            x                 -> x
 
      -- logarithm of any base
-     simplify vrs (Log a (Const 1))   = Const 0
-     simplify vrs (Log a (Var x))     = Log a (Var x)
-     simplify vrs (Log a (Const b))   = case (eval vrs (Log a (Const b))) of
-                                          Result r      -> Const r
-                                          EvalError err -> error err
-     simplify vrs (Log a (Pow e1 e2)) = Mult (simplify vrs e2) (Log a (simplify vrs e1))
-     simplify vrs (Log a e)           = Log a (simplify vrs e)
+     simplify vrs (Log b e) = let
+       s = simplify vrs e
+       in case s of
+         (Const 1)   -> Const 0
+         (Const a)   -> case (eval vrs (Log b (Const a))) of
+                          Result r      -> Const r
+                          EvalError err -> Log b (Const a)
+         (Var x)     -> Log b (Var x)
+         (Pow e1 e2) -> simplify vrs $ Mult e2 (Log b e1)
 
      -- natural logarithm
-     simplify vrs (Ln (E e))       = simplify vrs e
-     simplify vrs (Ln (Const 1))   = Const 0
-     simplify vrs (Ln (Var x))     = Ln (Var x)
-     simplify vrs (Ln (Const a))   = case (eval vrs (Ln (Const a))) of
-                                       Result r      -> Const r
-                                       EvalError err -> error err
-     simplify vrs (Ln (Pow e1 e2)) = Mult (simplify vrs e2) (Ln (simplify vrs e1))
-     simplify vrs (Ln e)           = Ln (simplify vrs e)
+     simplify vrs (Ln e) = let
+       s = simplify vrs e
+       in case s of
+            (Const 1)   -> Const 0
+            (Const a)   -> case (eval vrs (Ln (Const a))) of
+                             Result r      -> Const r
+                             EvalError err -> Ln (Const a)
+            (Var x)     -> Ln (Var x)
+            (E x)       -> x
+            (Pow e1 e2) -> simplify vrs $ Mult e2 (Ln e1)
+            x           -> Ln x
 
      -- cosine
-     simplify vrs (Cos (Var x))   = Cos (Var x)
-     simplify vrs (Cos (Const a)) = case (eval vrs (Cos (Const a))) of
-                                      Result r      -> Const r
-                                      EvalError err -> error err
-     simplify vrs (Cos e)         = Cos (simplify vrs e)
+     simplify vrs (Cos e) = let
+       s = simplify vrs e
+       in case s of
+            (Const a) -> case (eval vrs (Cos (Const a))) of
+                          Result r      -> Const r
+                          EvalError err -> Cos (Const a)
+            (Var x)   -> Cos (Var x)
+            x         -> x
 
      -- sine
-     simplify vrs (Sin (Var x))   = Sin (Var x)
-     simplify vrs (Sin (Const a)) = case (eval vrs (Sin (Const a))) of
-                                      Result r      -> Const r
-                                      EvalError err -> error err
-     simplify vrs (Sin e)         = Sin (simplify vrs e)
+     simplify vrs (Sin e) = let
+       s = simplify vrs e
+       in case s of
+            (Const a) -> case (eval vrs (Sin (Const a))) of
+                          Result r      -> Const r
+                          EvalError err -> Sin (Const a)
+            (Var x)   -> Sin (Var x)
+            x         -> x
 
      -- exponent
-     simplify vrs (Pow e (Const 0))         = Const 1
-     simplify vrs (Pow e (Const 1))         = simplify vrs e
-     simplify vrs (Pow (Var x) e)           = Pow (Var x) (simplify vrs e)
-     simplify vrs (Pow e (Var x))           = Pow (simplify vrs e) (Var x)
-     simplify vrs (Pow (Const a) (Const b)) = case (eval vrs (Pow (Const a) (Const b))) of
-                                                 Result r      -> Const r
-                                                 EvalError err -> error err
-     simplify vrs (Pow (Pow e1 e2) e)       = Pow (simplify vrs e1) (Mult (simplify vrs e2) (simplify vrs e))
-     simplify vrs (Pow e1 e2)               = Pow (simplify vrs e1) (simplify vrs e2)
+     simplify vrs (Pow e1 e2) = let
+       s1 = simplify vrs e1
+       s2 = simplify vrs e2
+       in case (s1, s2) of
+            (Const 0, e)       -> Const 0
+            (e, Const 0)       -> Const 1
+            (e, Const 1)       -> e
+            (Const a, Const b) -> case (eval vrs (Pow (Const a) (Const b))) of
+                                    Result r      -> Const r
+                                    EvalError err -> Pow (Const a) (Const b)
+            (Var x, e)         -> Pow (Var x) e
+            (e, Var x)         -> Pow e (Var x)
+            (Pow x1 x2, e)     -> simplify vrs $ Pow x1 (Mult x2 e)
+            (x1, x2)           -> Pow x1 x2
 
      -- constants and variables
      simplify vrs (Const x) = Const x

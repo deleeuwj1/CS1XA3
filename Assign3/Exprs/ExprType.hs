@@ -22,6 +22,8 @@ module ExprType where
               | Var String             -- ^ Var - wraps a variable identifier
     deriving (Eq) -- we didn't add deriving Show because GHCI wouldn't know how to display it, so we can create a "pretty" module to display it
 
+
+
   {- getVars
    - -----------------
    - Given an expression, retrieves a list of all variable identifiers

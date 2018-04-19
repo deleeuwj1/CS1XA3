@@ -6,7 +6,7 @@ import ExprType
 import ExprDiff
 import ExprEval
 import ExprParser
-import ExprShow
+import ExprPretty
 
 import Test.QuickCheck
 
