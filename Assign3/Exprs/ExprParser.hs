@@ -1,136 +1,131 @@
-{-# LANGUAGE FlexibleContexts #-}
+module ExprParser (parseExprD,parseExprF) where
 
-module ExprParser where --(parseExprFloat, parseExprDouble, parseExprInt, parseExprInteger) where
+  import ExprType
 
   import Text.Parsec
   import Text.Parsec.String
 
-  import ExprType
+  {- parsing doubles -}
+  parseExprD :: String -> Expr Double
+  parseExprD ss = case parse exprD "" ss of
+                    Left err   -> error $ show err
+                    Right expr -> expr
 
-  {-|
-  Module: ExprParser
-  Description: Contains parsers for doubles and floats.
-  Copyright: (c) [2018] [Jessica de Leeuw]
-  Licence MIT Licence
-  Maintainer: -}
-
-
-  {-
-  - We only will want to show the top level functions "parseExprDouble", "parseExprFloat", etc.
-  - to do this we put this (parseExprFloat, , etc.) in the module declaration
-  -}
-  {- This section defines all required functions to parse expressions containing doubles -}
-
-  parseExprDouble :: String -> Expr Double -- ^ the string to be parsed and a resulting expression
-  parseExprDouble ss = case parse exprD "" ss of
-                          Left err -> error $ "Parse Error " ++ show err
-                          Right val -> val
+  parseConstD :: Parser (Expr Double)
+  parseConstD = do { d <- decimalNum;
+                     return $ Const (read d) }
 
   exprD :: Parser (Expr Double)
-  exprD = undefined -- "TODO!"
+  exprD = let
+    first = (parens exprD) <|> otherOps (parens exprD) <|> logOp <|> (parseVar <|> parseConstD)
+    negFirst = do { char '-';
+                     f <- first;
+                     return $ Mult (Const (-1)) first }
+    second = (first <|> negFirst) `chainl` powOp
+    third = second `chainl` mulOp
+    in third `chainl` addOp
 
-  {-
-   parseConstD :: Parser (Expr Double)
-   parseConstD = do { symbol "val";
-                   w <- try negDigits <|> digits;
-                   symbol "." <|> symbol "";
-                   d <- digits;
-                   return (Const (w ++ d)) }
-  -}
+  {- parsing floats -}
+  parseExprF :: String -> Expr Float
+  parseExprF ss = case parse exprF "" ss of
+                    Left err   -> error $ show err
+                    Right expr -> expr
 
-   {- This section defines all required functions to parse expressions containing Floats -}
-   parseExprFloat :: String -> Expr Float
-   parseExprFloat ss = case parse exprF "" ss of
-                         Left err -> error $ "Parse Error " ++ show err
-                         Right val -> val
+  parseConstF :: Parser (Expr Float)
+  parseConstF = do { d <- decimalNum;
+                     return (Const (read d)) }
 
-   exprF :: Parser (Expr Float)
-   exprF = undefined -- "TODO!"
+  exprF :: Parser (Expr Float)
+  exprF = let
+    first = (parens exprF) <|> otherOps (parens exprF) <|> logOp <|> (parseVar <|> parseConstF)
+    negFirst = do { char '-';
+                     f <- first;
+                     return $ Mult (Const (-1)) first }
+    second = (first <|> negFirst) `chainl` powOp
+    third = second `chainl` mulOp
+    in third `chainl` addOp
 
-   {- This section defines all required functions to parse expressions containing Integers -}
-   parseExprInteger :: String -- ^ the string to be parsed
-                  -> Expr Integer -- ^ the resulting expression
-   parseExprInteger ss = case parse exprI "" ss of
-                          Left err -> error $ "Parse Error " ++ show err
-                          Right val -> val
+  {- parsing integer -}
+  parseExprI :: String -> Expr Integer
+  parseExprI ss = case parse exprI "" ss of
+                    Left err   -> error $ show err
+                    Right expr -> expr
 
-   exprI :: Parser (Expr Integer)
-   exprI = undefined -- "TODO!"
+  parseConstI :: Parser (Expr Integer)
+  parseConstI = do { d <- digits;
+                     return (Const (read d)) }
 
-   parseConstI :: Parser (Expr Integer)
-   parseConstI = do { symbol "val";
-                     i <- try negDigits <|> digits;
-                     return (Const i) }
+  exprI :: Parser (Expr Integer)
+  exprI = let
+    first = (parens exprI) <|> otherOps (parens exprI) <|> logOp <|> (parseVar <|> parseConstI)
+    negFirst = do { char '-';
+                     f <- first;
+                     return $ Mult (Const (-1)) first }
+    second = (first <|> negFirst) `chainl` powOp
+    third = second `chainl` mulOp
+    in third `chainl` addOp
 
-   {- This section defines all required functions to parse expressions containing Ints -}
-   parseExprInt:: String -- ^ the string to be parsed
-                   -> Expr Int -- ^ the resulting expression
-   parseExprInt ss = case parse exprD "" ss of
-                          Left err -> error $ "Parse Error " ++ show err
-                          Right val -> val
+  {- General parsers -}
 
-   exprInt :: Parser (Expr Int)
-   exprInt = error "TODO!"
+  parseVar :: Parser (Expr a)
+  parseVar = do { v <- many1 alphaNum;
+                  return (Var v) }
 
-   parseConstInt :: Parser (Expr Int)
-   parseConstInt = do { symbol "val";
-                       i <- try negDigits <|> digits;
-                       return (Const i) }
+  powOp :: Parser (Expr a -> Expr a -> Expr a)
+  powOp = do { symbol "^"; return (!^) }
 
-   {- General parsers -}
-   parseVar :: Parser (Expr a)
-   parseVar = do { symbol "var";
-                  v <- manyStrings;
-                  return (Var v)}
+  mulOp :: Parser (Expr a -> Expr a -> Expr a)
+  mulOp = do { symbol "*"; return (!*) }
+      <|> do { symbol "/"; return (!/) }
 
-   basicOps :: Parser (Expr a -> Expr a -> Expr a)
-   basicOps = do { symbol "!+"; return Add }
-          <|> do { symbol "!-"; return Sub }
-          <|> do { symbol "!*"; return Mult }
-          <|> do { symbol "!/"; return Div }
-          <|> do { symbol "!^"; return Pow }
+  addOp :: Parser (Expr a -> Expr a -> Expr a)
+  addOp = do { symbol "+"; return (!+) }
+      <|> do { symbol "-"; return (!-) }
 
-   otherOps :: Parser (Expr a -> Expr a)
-   otherOps = do { symbol "e"; return E }
-          <|> do { symbol "ln"; return Ln }
-          <|> do { symbol "sine"; return Sin }
-          <|> do { symbol "cosine"; return Cos }
+  otherOps :: Parser (Expr a) -> Parser (Expr a)
+  otherOps e1 = do { symbol "e"; p <- e1; return $ E p }
+            <|> do { symbol "ln"; p <- e1; return $ Ln p }
+            <|> do { symbol "sin"; p <- e1; return $ Sin p }
+            <|> do { symbol "cos"; p <- e1; return $ Cos p }
 
- {- Functions for all types -}
+  logOp :: Parser (Expr a) -> Parser (Expr a)
+  logOp e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ Log b p }
 
-   digits :: Parser String
-   digits = many1 digit
+  {- Functions for all types -}
 
-   -- for negative numbers
-   negDigits :: Parser String
-   negDigits = do { symbol "-";
+  digits :: Parser String
+  digits = many1 digit
+
+  -- for negative numbers
+  negDigits :: Parser String
+  negDigits = do { symbol "-";
                    ds <- digits;
                    return ('-':ds) }
 
+  decimalDigits :: Parser String
+  decimalDigits = do { d <- symbol "." <|> string "";
+                       n <- if d == "." then digits else string "";
+                       return (d ++ n) }
 
-   decimalDigits :: Parser String
-   decimalDigits = do { d <- symbol ".";
-                        return d }
+  decimalNum :: Parser String
+  decimalNum = do { w <- try negDigits <|> digits;
+                    d <- try decimalDigits <|> return "";
+                    return (w ++ d) }
 
-   doubles :: Parser String
-   doubles = do { w <- try negDigits <|> digits;
-                  d <- try decimalDigits <|> return "";
-                  return (w ++ d) }
+  manyStrings :: String -> Parser [String]
+  manyStrings ss = many (string ss)
 
-   manyStrings :: String -> Parser [String]
-   manyStrings ss = many (string ss)
+  symbol :: String -> Parser String
+  symbol ss = let
+    symbol' :: Parser String
+    symbol' = do { spaces;
+                   ss' <- string ss;
+                   spaces;
+                   return ss' }
+    in try symbol'
 
-   symbol :: String -> Parser String
-   symbol ss = let
-     symbol' :: Parser String
-     symbol' = do { spaces;
-                    ss' <- string ss;
-                    spaces;
-                    return ss' }
-     in try symbol'
-
-   parens :: Parser a -> Parser a
-   parens p = do { symbol "(";
-                   cs <- p;
-                   symbol ")";
-                   return cs }
+  parens :: Parser a -> Parser a
+  parens p = do { symbol "(";
+                  cs <- p;
+                  symbol ")";
+                  return cs }

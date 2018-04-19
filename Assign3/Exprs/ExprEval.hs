@@ -1,6 +1,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE ConstrainedClassMethods #-}
 
 module ExprEval where
 
@@ -21,7 +22,7 @@ module ExprEval where
 
   {- Helper function for eval
    - Determines if an expression evalutes to either negative or positive Infinity-}
-  isInfinity :: Double -> Bool -- (AllNums a) => a -> Bool
+  isInfinity :: (AllNums a) => a -> Bool -- (AllNums a) => a -> Bool
   isInfinity e = let inf = show e
                      in ((inf == "Infinity") || (inf == "-Infinity"))
 
@@ -70,38 +71,38 @@ module ExprEval where
      var :: String -> Expr a
      var = Var
 
-  instance ExprEval Double where -- (AllNums a) => ExprEval a
+  instance (AllNums a) => ExprEval a where -- ExprEval Double
      eval vrs (Add e1 e2)  = (+) <$> (eval vrs e1) <*> (eval vrs e2)
      eval vrs (Sub e1 e2)  = (-) <$> (eval vrs e1) <*> (eval vrs e2)
      eval vrs (Mult e1 e2) = (*) <$> (eval vrs e1) <*> (eval vrs e2)
      eval vrs (Div e1 e2)  = case (eval vrs e1, eval vrs e2) of
                                (_, EvalError err) -> EvalError err
                                (Result r1, Result r2) ->
-                                 let res = r1 / r2
-                                   in if (isNaN res) then EvalError "Zero Division Error" else Result res
+                                 let res = numDiv r1 r2
+                                   in if r2 == 0 then EvalError "Zero Division Error" else Result res
      eval vrs (E e)        = case (eval vrs e) of
                                EvalError err -> EvalError err
                                Result r -> if (isInfinity r)
                                            then EvalError "Invalid Operands"
-                                           else Result (exp r)
+                                           else Result (numE r)
      eval vrs (Log a e)    = case (eval vrs e) of
                               EvalError err -> EvalError err
                               Result r -> if a > 0
                                           then
                                             if r > 0
-                                            then Result (logBase a r)
+                                            then Result (numLog a r)
                                             else EvalError "Expression cannot be less than or equal to 0"
                                           else EvalError "Base must be greater than 0"
      eval vrs (Ln e)       = case (eval vrs e) of
                               EvalError err -> EvalError err
                               Result r -> if r > 0
-                                          then Result (log r)
+                                          then Result (numLn r)
                                           else EvalError "Expression cannot be less than or equal to 0"
-     eval vrs (Cos e)      = (cos) <$> (eval vrs e)
-     eval vrs (Sin e)      = (sin) <$> (eval vrs e)
+     eval vrs (Cos e)      = (numCos) <$> (eval vrs e)
+     eval vrs (Sin e)      = (numSin) <$> (eval vrs e)
      eval vrs (Pow e1 e2)  = case (eval vrs e1, eval vrs e2) of
                                (Result r1, Result r2) ->
-                                  let res = r1 ** r2
+                                  let res = numPow r1 r2
                                     in if (isInfinity res)
                                        then EvalError "Invalid operands"
                                        else
@@ -199,7 +200,7 @@ module ExprEval where
        in case (s1, s2) of
             (e, Const 1)               -> s1
             (Const 0, _)               -> Const 0
-            (Const a, Const b)         -> Const (a / b)
+            (Const a, Const b)         -> Const (numDiv a b)
             (Const a, Div (Const b) e) -> Div (Mult (Const a) e) (Const b)
             (Var x, Var y)             -> if x == y
                                           then Const 1
@@ -292,7 +293,7 @@ module ExprEval where
                                 Just value -> Const value
                                 Nothing    -> Var v
 
-  class (Num a) => AllNums a where
+  class (Num a, Eq a, Show a, Ord a) => AllNums a where
     numDiv :: a -> a -> a
     numE :: a -> a
     numLog :: a -> a -> a
