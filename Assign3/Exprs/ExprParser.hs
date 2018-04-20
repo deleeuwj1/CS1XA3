@@ -1,4 +1,14 @@
-module ExprParser (parseExprD,parseExprF) where
+{-|
+Module      : ExprParser
+Description : Contains functions that parse strings of a certain format into an `Expr` type
+Copyright   : (c) Jessica de Leeuw @2018
+License     : MIT
+Maintainer  : deleeuwj@mcmaster.ca
+Stability   : experimental
+Portability : POSIX
+-}
+
+module ExprParser (parseExprD, parseExprF, parseExprI) where
 
   import ExprType
   import ExprEval

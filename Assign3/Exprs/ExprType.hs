@@ -1,11 +1,20 @@
+{-|
+Module      : ExprType
+Description : Contains the datatype declaration of `Expr`
+Copyright   : (c) Jessica de Leeuw @2018
+License     : MIT
+Maintainer  : deleeuwj@mcmaster.ca
+Stability   : experimental
+Portability : POSIX
+-}
+
 module ExprType where
 
   import Data.List
 
-  -- * Section: datatype declaration
+  -- * Datatype declaration
 
-  {- |
-   - Datatype for Numerical Expressions
+  {- |  Datatype for Numerical Expressions
    - Supports the following operations: -}
 
   data Expr a = Add (Expr a) (Expr a)  -- ^ Add - binary addition
@@ -20,11 +29,11 @@ module ExprType where
               | Pow (Expr a) (Expr a)  -- ^ Pow - some expression to some exponent
               | Const a                -- ^ Const - wraps a constant value
               | Var String             -- ^ Var - wraps a variable identifier
-    deriving (Eq) -- we didn't add deriving Show because GHCI wouldn't know how to display it, so we can create a "pretty" module to display it
+    deriving (Eq)
 
 
 
-  {- getVars
+  {- `getVars`
    - -----------------
    - Given an expression, retrieves a list of all variable identifiers
   -}

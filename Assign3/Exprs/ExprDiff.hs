@@ -1,6 +1,16 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
 
+{-|
+Module      : ExprDiff
+Description : Contains methods for differentiable expressions
+Copyright   : (c) Jessica de Leeuw @2018
+License     : MIT
+Maintainer  : deleeuwj@mcmaster.ca
+Stability   : experimental
+Portability : POSIX
+-}
+
 module ExprDiff where
 
   import ExprType
