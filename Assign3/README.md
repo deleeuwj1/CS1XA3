@@ -14,3 +14,6 @@ Due Date: April 20th, 2018.
 ### License
 
 This project is protected under the MIT License. For more information, see [LICENSE.md](https://github.com/deleeuwj1/CS1XA3/blob/master/Assign3/LICENSE.md).
+
+### Doumentation
+To view documentation, visit [this site](https://deleeuwj1.github.io/docs/).
