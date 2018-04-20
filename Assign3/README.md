@@ -18,13 +18,15 @@ Mult (expression) (expression) -- inputted as (expression) * (expression)
 Div (expression) (expression)  -- inputted as (expression) / (expression)
 E (expression)                 -- inputted as exp(expression)
 Ln (expression)                -- inputted as ln(expression)
+Log (num) (expression)         -- inputted as log(base) (expression), where base is a number
 Cos (expression)               -- inputted as cos(expression)
 Sin (expression)               -- inputted as sin(expression)
 Pow (expression) (expression)  -- inputted as (expression) ^ (expression)
 ```
 Example DSL use: 
-`"x + (cos(-x) ^ 3)"` becomes: Add (Var "x") (Pow (Cos (Mult (Const (-1)) (Var "x"))) (Const 3))
-`"ln (y / (4*5)) - exp(32 + z)"`bcomes Sub (Ln (Div (Var "y") (Mult (Const 4) (Const 5)))) (E (Add (Const 32) (Var "z")))
+- `"x + (cos(-x) ^ 3)"` is the same as: `Add (Var "x") (Pow (Cos (Mult (Const (-1)) (Var "x"))) (Const 3))`
+- `"ln (y / (4*5)) - exp(32 + z)"` is the same as: `Sub (Ln (Div (Var "y") (Mult (Const 4) (Const 5)))) (E (Add (Const 32) (Var "z")))`
+- "log24 (sin(x+3)) is the same as: `Log 24 (Sin (Add (Var "x") (Const 3))` 
 
 ## References
   - Used [Allen Chen's](https://github.com/chenc118/CS1XA3/blob/master/Assign3/ExprDiff.hs) method of generalizing the `eval` and `simplify` functions, both located in `ExprEval.hs`. This allows `ExprEval` to work with numerical types such as `Double`, `Float`, `Integer` and `Int`.  
