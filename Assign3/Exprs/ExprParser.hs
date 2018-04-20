@@ -2,6 +2,7 @@ module ExprParser (parseExprD,parseExprF) where
 
   import ExprType
   import ExprEval
+  import ExprPretty
 
   import Text.Parsec
   import Text.Parsec.String
@@ -81,22 +82,22 @@ module ExprParser (parseExprD,parseExprF) where
   parseVar = do { v <- many1 alphaNum;
                   return (Var v) }
 
-  powOp :: Parser (Expr a -> Expr a -> Expr a)
-  powOp = do { symbol "^"; return Pow }
+  powOp :: (AllNums a) => Parser (Expr a -> Expr a -> Expr a)
+  powOp = do { symbol "^"; return (!^) }
 
-  mulOp :: Parser (Expr a -> Expr a -> Expr a)
-  mulOp = do { symbol "*"; return Mult }
-      <|> do { symbol "/"; return Div }
+  mulOp :: (AllNums a) => Parser (Expr a -> Expr a -> Expr a)
+  mulOp = do { symbol "*"; return (!*) }
+      <|> do { symbol "/"; return (!/) }
 
-  addOp :: Parser (Expr a -> Expr a -> Expr a)
-  addOp = do { symbol "+"; return Add }
-      <|> do { symbol "-"; return Sub }
+  addOp :: (AllNums a) => Parser (Expr a -> Expr a -> Expr a)
+  addOp = do { symbol "+"; return (!+) }
+      <|> do { symbol "-"; return (!-) }
 
-  otherOps :: Parser (Expr a) -> Parser (Expr a)
-  otherOps e1 = do { symbol "exp"; p <- e1; return $ E p }
-            <|> do { symbol "ln"; p <- e1; return $ Ln p }
-            <|> do { symbol "sin"; p <- e1; return $ Sin p }
-            <|> do { symbol "cos"; p <- e1; return $ Cos p }
+  otherOps :: (AllNums a) => Parser (Expr a) -> Parser (Expr a)
+  otherOps e1 = do { symbol "exp"; p <- e1; return $ e p }
+            <|> do { symbol "ln"; p <- e1; return $ ln p }
+            <|> do { symbol "sin"; p <- e1; return $ sine p }
+            <|> do { symbol "cos"; p <- e1; return $ cosine p }
 
   {- Functions for all types -}
 

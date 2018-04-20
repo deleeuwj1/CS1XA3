@@ -20,7 +20,7 @@ module ExprType where
               | Pow (Expr a) (Expr a)  -- ^ Pow - some expression to some exponent
               | Const a                -- ^ Const - wraps a constant value
               | Var String             -- ^ Var - wraps a variable identifier
-    deriving (Eq, Show) -- we didn't add deriving Show because GHCI wouldn't know how to display it, so we can create a "pretty" module to display it
+    deriving (Eq) -- we didn't add deriving Show because GHCI wouldn't know how to display it, so we can create a "pretty" module to display it
 
 
 
