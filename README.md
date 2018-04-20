@@ -24,6 +24,7 @@ Session: Winter 2018
 
 ## Assign3
   - This directory will contain the code for Assignment 3.
+  - If you would like to view documentation for the library, visit [this site] (https://deleeuwj1.github.io/docs/).
 
 ## Labs
   - This directory contains subdirectories for each of the marked labs.
