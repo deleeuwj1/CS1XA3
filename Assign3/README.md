@@ -30,7 +30,7 @@ Mult (expression) (expression) -- inputted as (expression) * (expression)
 Div (expression) (expression)  -- inputted as (expression) / (expression)
 E (expression)                 -- inputted as exp(expression)
 Ln (expression)                -- inputted as ln(expression)
-Log (num) (expression)         -- inputted as log(base) (expression), where base is a number
+Log (num) (expression)         -- inputted as log(base) (expression), where base is a number; see `ExprParser` for more detail
 Cos (expression)               -- inputted as cos(expression)
 Sin (expression)               -- inputted as sin(expression)
 Pow (expression) (expression)  -- inputted as (expression) ^ (expression)
@@ -60,6 +60,12 @@ Pow (expression) (expression)  -- inputted as (expression) ^ (expression)
 - partDiff partially differentiates a variable based on the variable the user chooses to differentiate by.
    - Ex. `partDiff "x" (parseExprD "2 * x")` becomes: `2`
    - Ex. `partDiff "y" (parseExprD "sin(2 * x * y)")` becomes `2*x*(cos(2*x*y))`
+
+## Extra Features
+- Subtraction (Sub)
+- Division (Div)
+- Exponents (Pow)
+- Logarithm of any base (Log a)
 
 ## References
   - Used [Allen Chen's](https://github.com/chenc118/CS1XA3/blob/master/Assign3/ExprDiff.hs) method of generalizing the `eval` and `simplify` functions, both located in `ExprEval.hs`. This allows `ExprEval` to work with numerical types such as `Double`, `Float`, `Integer` and `Int`.  
