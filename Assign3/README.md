@@ -4,13 +4,13 @@ Due Date: April 20th, 2018.
 
 ## Description
 A Math library written in Haskell that is built to parse, simplify, evaluate and differentiate functions.
-It inlcudes: 
+It includes the modules: 
 - `ExprType` which contains the datatype definition
 - `ExprEval` which contains functions that simplify and evaluate expressions
 - `ExprDiff` which contains a function that partially differentiates a given expression
 - `ExprParser` which parses certain strings into the `Expr` type
 - `ExprPretty` which outputs the expressions in a readable format
-- `ExprTest` which is used to test the accuracy and functionalirt of the library
+- `ExprTest` which is used to test the accuracy and functionality of the library
 
 ## Documentation
 To view thorough Haddock documentation, visit [this site](https://deleeuwj1.github.io/docs/).
@@ -34,8 +34,8 @@ Pow (expression) (expression)  -- inputted as (expression) ^ (expression)
 Example DSL use: 
 - `"x + (cos(-x) ^ 3)"` is the same as: `Add (Var "x") (Pow (Cos (Mult (Const (-1)) (Var "x"))) (Const 3))`
 - `"ln (y / (4*5)) - exp(32 + z)"` is the same as: `Sub (Ln (Div (Var "y") (Mult (Const 4) (Const 5)))) (E (Add (Const 32) (Var "z")))`
-- `log24 (sin(x+3))` is the same as: `Log 24 (Sin (Add (Var "x") (Const 3))` 
-    - Note that the input for the base is attached to the word log. To input log of base 10, it must be written as `log10`.
+- `log24(sin(x+3))` is the same as: `Log 24 (Sin (Add (Var "x") (Const 3))` 
+    - Note that the input for the base is attached to the word log. To input log of base 10, it must be written as `log10(x)`.
 
 ## References
   - Used [Allen Chen's](https://github.com/chenc118/CS1XA3/blob/master/Assign3/ExprDiff.hs) method of generalizing the `eval` and `simplify` functions, both located in `ExprEval.hs`. This allows `ExprEval` to work with numerical types such as `Double`, `Float`, `Integer` and `Int`.  
