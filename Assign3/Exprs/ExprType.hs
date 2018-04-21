@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleInstances, DeriveGeneric #-}
+
 {-|
 Module      : ExprType
 Description : Contains the datatype declaration of `Expr`
@@ -11,6 +13,9 @@ Portability : POSIX
 module ExprType where
 
   import Data.List
+
+  import Generic.Random.Generic
+  import GHC.Generics
 
   -- * Datatype declaration
 
@@ -29,16 +34,15 @@ module ExprType where
               | Pow (Expr a) (Expr a)  -- ^ Pow - some expression to some exponent
               | Const a                -- ^ Const - wraps a constant value
               | Var String             -- ^ Var - wraps a variable identifier
-    deriving (Eq)
+    deriving (Eq, Generic)
 
 
 
   {- `getVars`
-   - -----------------
-   - Given an expression, retrieves a list of all variable identifiers
+   - | Given an expression, retrieves a list of all variable identifiers that are present in the expression
   -}
 
-  getVars :: Expr a -> [String]
+  getVars :: Expr a -> [String] -- ^ takes an expression and returns a list of variables as Strings
   getVars (Add e1 e2)  = getVars e1 ++ getVars e2
   getVars (Sub e1 e2)  = getVars e1 ++ getVars e2
   getVars (Mult e1 e2) = getVars e1 ++ getVars e2

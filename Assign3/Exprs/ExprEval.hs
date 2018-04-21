@@ -1,7 +1,4 @@
-{-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE ConstrainedClassMethods #-}
+{-# LANGUAGE UndecidableInstances, FlexibleInstances, FlexibleContexts, ConstrainedClassMethods #-}
 
 {-|
 Module      : ExprEval
@@ -34,15 +31,14 @@ module ExprEval where
     (EvalError err) <*> _ = EvalError err
 
   {- Helper function for eval:
-   - Determines if an expression evaluates to either negative or positive Infinity-}
+   - Determines if an expression evaluates to either negative or positive Infinity -}
   -- | `isInfinity` takes a Double, Float, Int or Integer and returns a Boolean result
   isInfinity :: (AllNums a) => a -> Bool
   isInfinity e = let inf = show e
                      in ((inf == "Infinity") || (inf == "-Infinity"))
 
   -- * Class Declaration
-  {- | Class ExprEval
-   -  Differentiable Expressions
+  {-  Class ExprEval
    -  ------------------------------
    -  Methods
      -  eval- given a dictionary of variable identifiers and an Expr, will evaluate the Expr to a value
@@ -178,7 +174,10 @@ module ExprEval where
            (Ln e3, Ln e4)             -> simplify vrs $ Ln (Div e3 e4)
            (Log a e3, Log b e4)       -> if a == b
                                          then simplify vrs $ Log a (Div e3 e4)
-                                         else simplify vrs (Sub (Log a e3) (Log b e4))
+                                         else Sub s1 s2
+           (x1, x2)                   -> if x1 == x2
+                                         then Const 0
+                                         else Sub s1 s2
 
      -- Simplification of multiplication
      simplify vrs (Mult e1 e2) = let
@@ -195,6 +194,8 @@ module ExprEval where
          (Const a, Mult (Const b) e)      -> Mult (Const (a * b)) e
          (Const a, e)                     -> Mult (Const a) s2
          (e, Const a)                     -> Mult (Const a) s1
+         (Mult (Const a) x1, x2)          -> simplify vrs $ Mult (Const a) (Mult x1 x2)
+         (x1, Mult (Const a) x2)          -> simplify vrs $ Mult (Const a) (Mult x1 x2)
          (Var x, Var y)                   -> if x < y -- puts them in alphabetic order for standardization
                                              then Mult s1 s2
                                              else
@@ -228,7 +229,11 @@ module ExprEval where
             (Const a, Const b)         -> case (eval vrs (Div (Const a) (Const b))) of
                                             Result r      -> Const r -- simplifies the power of a constant to a constant into just a constant
                                             EvalError err -> Div (Const a) (Const b)
-      {-      (Mult x1 x2, x3)           -> if x1 == x3
+            (Const a, Div (Const b) e) -> simplify vrs $ Mult (Div (Const a) (Const b)) e -- simplifes multiple divisions into numerator / denominator
+            (Mult (Const a) x1, x2)    -> if x1 == x2
+                                          then Const a
+                                          else simplify vrs $ Mult (Const a) (Div x1 x2)
+            (Mult x1 x2, x3)           -> if x1 == x3
                                           then x2
                                           else if x2 == x3
                                                then x1
@@ -241,19 +246,7 @@ module ExprEval where
                                                then simplify vrs $ Div (Const 1) x3
                                                else if x1 == s2
                                                     then Const 1
-                                                    else Div x1 (Mult x2 x3) -}
-            (Mult x1 x2, Mult x3 x4)   -> if x1 == x3
-                                          then simplify vrs $ Div x2 x4
-                                          else if x1 == x4
-                                            then simplify vrs $ Div x2 x4
-                                            else if x2 == x3
-                                                 then simplify vrs $ Div x1 x4
-                                                  else if x2 == x4
-                                                       then simplify vrs $ Div x1 x3
-                                                       else if s1 == s2
-                                                            then Const 1
-                                                            else Div s1 s2
-            (Const a, Div (Const b) e) -> simplify vrs $ Div (Mult (Const a) e) (Const b) -- simplifes multiple divisions into numerator / denominator
+                                                    else Div x1 (Mult x2 x3)
             (Var x, Var y)             -> if x == y
                                           then Const 1
                                           else Div s1 s2
@@ -283,26 +276,30 @@ module ExprEval where
      simplify vrs (Log b e) = let
        s = simplify vrs e
        in case s of
-         (Const 1)   -> Const 0
-         (Const a)   -> case (eval vrs (Log b (Const a))) of
-                          Result r      -> Const r -- simplifies the logarithm of a constant into just a constant
-                          EvalError err -> Log b (Const a)
-         (Var x)     -> Log b (Var x)
-         (Pow e1 e2) -> simplify vrs $ Mult e2 (Log b e1)
-         x           -> Log b x -- the expression remains the same if it does not fit any of the cases
+         (Const 1)         -> Const 0 -- log of 0 is 1
+         (Const a)         -> if a == b
+                              then Const 1
+                              else case (eval vrs (Log b (Const a))) of
+                                    Result r      -> Const r -- simplifies the logarithm of a constant into just a constant
+                                    EvalError err -> Log b (Const a)
+         (Var x)           -> Log b (Var x)
+         (Div (Const a) x) -> simplify vrs $ Mult (Mult (Const (-1)) (Const a)) (Log b x) -- logarithm power rule
+         (Pow e1 e2)       -> simplify vrs $ Mult e2 (Log b e1)
+         x                 -> Log b x -- the expression remains the same if it does not fit any of the cases
 
      -- Simplification of the natural logarithm
      simplify vrs (Ln e) = let
        s = simplify vrs e
        in case s of
-            (Const 1)   -> Const 0
-            (Const a)   -> case (eval vrs (Ln (Const a))) of
-                             Result r      -> Const r -- simplifies the natural logarithm of a constant into just a constant
-                             EvalError err -> Ln (Const a)
-            (Var x)     -> Ln (Var x)
-            (E x)       -> x
-            (Pow e1 e2) -> simplify vrs $ Mult e2 (Ln e1)
-            x           -> Ln x -- the expression remains the same if it does not fit any of the cases
+            (Const 1)        -> Const 0
+            (Const a)        -> case (eval vrs (Ln (Const a))) of
+                                  Result r      -> Const r -- simplifies the natural logarithm of a constant into just a constant
+                                  EvalError err -> Ln (Const a)
+            (Var x)           -> Ln (Var x)
+            (Div (Const a) x) -> simplify vrs $ Mult (Mult (Const (-1)) (Const a)) (Ln x) -- logarithm power rule
+            (E x)             -> x -- ln of e to an expression becomes just the expression
+            (Pow e1 e2)       -> simplify vrs $ Mult e2 (Ln e1) -- logarithm power rule
+            x                 -> Ln x -- the expression remains the same if it does not fit any of the cases
 
      -- Simplification of cosine
      simplify vrs (Cos e) = let
@@ -344,7 +341,7 @@ module ExprEval where
      simplify vrs (Var v)   = case Map.lookup v vrs of
                                 Just value -> Const value
                                 Nothing    -> Var v
-
+  -- | Allows `eval` and `simplify` to be used with Double, Float, Integer and Int types by creating instances for each type and defining mathematical operators in them
   class (Num a, Eq a, Show a, Ord a) => AllNums a where
     numDiv :: a -> a -> a
     numE :: a -> a

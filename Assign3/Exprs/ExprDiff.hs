@@ -1,5 +1,4 @@
-{-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE UndecidableInstances, FlexibleInstances #-}
 
 {-|
 Module      : ExprDiff
@@ -18,6 +17,8 @@ module ExprDiff where
   import ExprPretty
   import Data.Map as Map
 
+  -- * Class Declaration
+  -- | ExprDiff has the method `partDiff`, which symbolically partially differentiates an expression
   class ExprDiff a where
     partDiff :: String -> Expr a -> Expr a
 
