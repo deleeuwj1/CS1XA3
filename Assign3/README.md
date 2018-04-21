@@ -13,7 +13,7 @@ It includes the modules:
 - `ExprTest` which is used to test the accuracy and functionality of the library
 
 ## Documentation and Installation
-To use `ExprTest.hs`, installationg of the `generic-random` package is required. This is done by running 
+To use `ExprTest.hs`, installation of the `generic-random` package is required. This is done by running 
 `cabal install generic-random`
 in the folder that contains the `Expr` modules.
 
@@ -40,7 +40,7 @@ Pow (expression) (expression)  -- inputted as (expression) ^ (expression)
 ### ExprEval
 - `eval`
     - Evaluates expressions by determining if there are exceptions or errors in the expression. If there aren't, `eval` matches a variable to it's value and evaluates the expression for the given values.
-    - It takes a list of tuple that contain a variable and it's corresponding value.
+    - It takes a list of tuples that contain a variable and it's corresponding value.
        - Ex. `[("x", 12), ("y", 13.5), ("z", 0)]`
 
 - `simplify`
