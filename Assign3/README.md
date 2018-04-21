@@ -12,7 +12,10 @@ It includes the modules:
 - `ExprPretty` which outputs the expressions in a readable format
 - `ExprTest` which is used to test the accuracy and functionality of the library
 
-## Documentation
+## Documentation and Installation
+To use `ExprTest.hs`, installationg of the `generic-random` package is required. This is done by running 
+`cabal install generic-random`
+in the folder that contains the `Expr` modules.
 To view thorough Haddock documentation, visit [this site](https://deleeuwj1.github.io/docs/).
 
 ## Functionalities
