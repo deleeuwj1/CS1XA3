@@ -36,8 +36,6 @@ module ExprType where
               | Var String             -- ^ Var - wraps a variable identifier
     deriving (Eq, Generic)
 
-
-
   {- `getVars`
    - | Given an expression, retrieves a list of all variable identifiers that are present in the expression
   -}

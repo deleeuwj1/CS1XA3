@@ -36,7 +36,7 @@ module ExprTest where
   simplifyProp1 e = simplify vrs e == simplify vrs (simplify vrs e)
     where vrs = Map.fromList []
 
-  -- | if the variable is not in the list of vars, it should be returned as a variable
+  -- | If the variable is not in the list of vars, it should be returned as a variable
   simplifyProp2 :: Double -> Double -> String -> Bool
   simplifyProp2 a b s = simplify (Map.fromList [("x", a),("y", b)]) (Var s) == Var s
 

@@ -18,6 +18,8 @@ module ExprParser (parseExprD, parseExprF, parseExprI) where
   import Text.Parsec.String
 
   {- parsing doubles -}
+
+  -- | Parses an expression that contains constants of type Double
   parseExprD :: String -> Expr Double
   parseExprD ss = case parse exprD "" ss of
                     Left err   -> error $ show err
@@ -44,6 +46,8 @@ module ExprParser (parseExprD, parseExprF, parseExprI) where
   logOpD e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ log' (read b) p }
 
   {- parsing floats -}
+
+  -- | Parses an expression that contains constants of type Float
   parseExprF :: String -> Expr Float
   parseExprF ss = case parse exprF "" ss of
                     Left err   -> error $ show err
@@ -70,6 +74,8 @@ module ExprParser (parseExprD, parseExprF, parseExprI) where
   logOpF e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ log' (read b) p }
 
   {- parsing integer -}
+
+  -- | Parses an expression that contains constants of type Integer
   parseExprI :: String -> Expr Integer
   parseExprI ss = case parse exprI "" ss of
                     Left err   -> error $ show err
@@ -89,13 +95,15 @@ module ExprParser (parseExprD, parseExprF, parseExprI) where
                      return $ Mult (Const (-1)) f }
     second = (first <|> negFirst) `chainl1` powOp -- power is the next highest for order of parsing
     third = second `chainl1` mulOp -- multiplication and division are next
-    in third `chainl1` addOp -- adiition and subtraction are last
+    in third `chainl1` addOp -- addition and subtraction are last
 
- -- | Parses logarithms of type Integer
+  -- | Parses logarithms of type Integer
   logOpI :: Parser (Expr Integer) -> Parser (Expr Integer)
   logOpI e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ log' (read b) p }
 
   {- parsing ints -}
+
+  -- | Parses an expression that contains constants of type Int
   parseExprInt :: String -> Expr Int
   parseExprInt ss = case parse exprInt "" ss of
                     Left err   -> error $ show err
