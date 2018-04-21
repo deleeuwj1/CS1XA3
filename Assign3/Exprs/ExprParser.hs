@@ -127,7 +127,7 @@ module ExprParser (parseExprD, parseExprF, parseExprI) where
       <|> do { symbol "-"; return (!-) }
 
   otherOps :: (AllNums a) => Parser (Expr a) -> Parser (Expr a)
-  otherOps e1 = do { symbol "exp"; p <- e1; return $ e p }
+  otherOps e1 = do { symbol "exp"; p <- e1; return $ nPow p }
             <|> do { symbol "ln"; p <- e1; return $ ln p }
             <|> do { symbol "sin"; p <- e1; return $ sine p }
             <|> do { symbol "cos"; p <- e1; return $ cosine p }

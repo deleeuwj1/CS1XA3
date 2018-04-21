@@ -62,8 +62,8 @@ module ExprEval where
      e1 !* e2 = simplify (Map.fromList []) $ Mult e1 e2
      (!/) :: (AllNums a) => Expr a -> Expr a -> Expr a
      e1 !/ e2 = simplify (Map.fromList []) $ Div e1 e2
-     e :: (AllNums a) => Expr a -> Expr a
-     e e = simplify (Map.fromList []) $ E e
+     nPow :: (AllNums a) => Expr a -> Expr a
+     nPow e = simplify (Map.fromList []) $ E e
      log' :: (AllNums a) => a -> Expr a -> Expr a
      log' a e = simplify (Map.fromList []) $ Log a e
      ln :: (AllNums a) => Expr a -> Expr a
@@ -137,8 +137,14 @@ module ExprEval where
             (Const a, Add (Const b) e) -> simplify vrs $ Add (Const (a + b)) (simplify vrs e) -- addtion of nested constants into one consant
             (Const a, e)               -> Add (Const a) s2 -- brings the constant to the front of the simplified expression
             (e, Const a)               -> Add (Const a) s1
-            (e, Var x)                 -> Add s1 (Var x)  -- brings the variable to the end of the simplified expression
-            (Var x, e)                 -> Add s2 (Var x)
+      --    (e, Var x)                 -> Add s1 (Var x)  -- brings the variable to the end of the simplified expression
+      --    (Var x, e)                 -> Add s2 (Var x)
+            (Var x, Var y)             -> if x == y
+                                          then simplify vrs $ Mult (Const 2) (Var x)
+                                          else Add s1 s2
+            (Var x, Add (Var y) e)     -> if x == y
+                                          then simplify vrs $ Add e (Mult (Const 2) (Var x))
+                                          else Add s1 s2
             (x1, Mult (Const (-1)) x2) -> simplify vrs (Sub x1 x2) -- turns addition of an expression and a negative expression into subtraction
             (Ln e3, Ln e4)             -> simplify vrs $ Ln (Mult e3 e4) -- ln rules of addition
             (Log a e3, Log b e4)       -> if a == b -- if the bases are equal, the logarithm rules of addition apply
@@ -192,6 +198,7 @@ module ExprEval where
          (Const (-1),Mult (Const (-1)) e) -> e
          (Const a, Const b)               -> Const (a * b) -- simplifies the multiplication of two constants into just one constant
          (Const a, Mult (Const b) e)      -> Mult (Const (a * b)) e
+         (Mult (Const a) e, Const b)      -> Mult (Const (a * b)) e
          (Const a, e)                     -> Mult (Const a) s2
          (e, Const a)                     -> Mult (Const a) s1
          (Mult (Const a) x1, x2)          -> simplify vrs $ Mult (Const a) (Mult x1 x2)

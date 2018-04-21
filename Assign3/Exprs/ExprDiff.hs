@@ -23,29 +23,29 @@ module ExprDiff where
     partDiff :: String -> Expr a -> Expr a
 
   instance ExprDiff Double where
-    partDiff v (Add e1 e2)  = Add (partDiff v e1) (partDiff v e2)
-    partDiff v (Sub e1 e2)  = Sub (partDiff v e1) (partDiff v e2)
+    partDiff v (Add e1 e2)  = (partDiff v e1) !+ (partDiff v e2)
+    partDiff v (Sub e1 e2)  = (partDiff v e1) !- (partDiff v e2)
     partDiff v (Mult e1 e2) = let
       pd1 = partDiff v e1
       pd2 = partDiff v e2
-      in Add (Mult pd1 e2) (Mult e1 pd2)
+      in (pd1 !* e2) !+ (e1 !* pd2)
 
-    partDiff v (Div (Const 1) e) = Mult (Mult (Const (-1)) (partDiff v e)) (Div (Const 1) (Pow e (Const 2)))
+    partDiff v (Div (Const 1) e) = ((val (-1)) !* (partDiff v e)) !* ((val 1) !/ (e !^ (val 2)))
     partDiff v (Div e1 e2)       = let
       pd1 = partDiff v e1
       pd2 = partDiff v e2
-      top = Sub (Mult pd1 e2) (Mult e1 pd2)
-      bottom = Pow (e2) (Const 2)
-      in (Div top bottom)
+      top = (pd1 !* e2) !- (e1 !* pd2)
+      bottom = (e2) !^ (val 2)
+      in (top !/ bottom)
 
-    partDiff v (E e)        = Mult (E e) (partDiff v e)
-    partDiff v (Log a e)    = Mult (Div (Const 1) (Ln (Const a))) (partDiff v e)
+    partDiff v (E e)        = (nPow(e)) !* (partDiff v e)
+    partDiff v (Log a e)    = ((val 1) !/ (ln (val a))) !* (partDiff v e)
 
-    partDiff v (Ln e)       = Mult (partDiff v e) (Div (Const 1) e)
+    partDiff v (Ln e)       = (partDiff v e) !* ((val 1) !/ e)
 
-    partDiff v (Cos e)      = Mult (partDiff v e) (Mult (Const (-1)) (Sin e))
-    partDiff v (Sin e)      = Mult (partDiff v e) (Cos e)
-    partDiff v (Pow e1 e2)  = partDiff v (E (Mult e2 (Ln e1)))
+    partDiff v (Cos e)      = (partDiff v e) !* ((val (-1)) !* (sine e))
+    partDiff v (Sin e)      = (partDiff v e) !* (cosine e)
+    partDiff v (Pow e1 e2)  = partDiff v (nPow (e2 !* (ln e1)))
 
-    partDiff _ (Const a)    = Const 0
-    partDiff v (Var b)      = if b == v then (Const 1) else (Const 0)
+    partDiff _ (Const a)    = val 0
+    partDiff v (Var b)      = if b == v then (val 1) else (val 0)
