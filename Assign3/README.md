@@ -30,11 +30,12 @@ Mult (expression) (expression) -- inputted as (expression) * (expression)
 Div (expression) (expression)  -- inputted as (expression) / (expression)
 E (expression)                 -- inputted as exp(expression)
 Ln (expression)                -- inputted as ln(expression)
-Log (num) (expression)         -- inputted as log(base) (expression), where base is a number; see `ExprParser` for more detail
+Log (num) (expression)         -- inputted as log(base) (expression), where base is a number
 Cos (expression)               -- inputted as cos(expression)
 Sin (expression)               -- inputted as sin(expression)
 Pow (expression) (expression)  -- inputted as (expression) ^ (expression)
 ```
+See section ExprParser for more detail and for examples.
 ## Usage of the Modules
 
 ### ExprEval
