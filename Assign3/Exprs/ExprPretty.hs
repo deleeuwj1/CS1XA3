@@ -23,7 +23,7 @@ module ExprPretty where
     show (Mult e1 e2) = parenthesis $ (show e1) ++ " * " ++ (show e2)
     show (Div e1 e2)  = parenthesis $ (show e1) ++ " / " ++ (show e2)
     show (E e)        = "e^" ++ parenthesis (show e)
-    show (Log a e)    = "log base " ++ (show a) ++ " " ++ parenthesis(show e)
+    show (Log a e)    = "log base " ++ (show a) ++ " " ++ parenthesis (show e)
     show (Ln e)       = "ln" ++ parenthesis (show e)
     show (Cos e)      = "cos" ++ parenthesis (show e)
     show (Sin e)      = "sin" ++ parenthesis (show e)

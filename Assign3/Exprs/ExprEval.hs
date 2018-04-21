@@ -88,11 +88,11 @@ module ExprEval where
                                (_, EvalError err) -> EvalError err
                                (Result r1, Result r2) ->
                                  let res = numDiv r1 r2
-                                   in if r2 == 0 then EvalError "Zero Division Error" else Result res
+                                   in if r2 == 0 then EvalError "Zero Division Error" else Result res -- cannot divide something by 0
      eval vrs (E e)        = case (eval vrs e) of
                                EvalError err -> EvalError err
                                Result r -> if (isInfinity r)
-                                           then EvalError "Invalid Operands"
+                                           then EvalError "Invalid Operands" -- this throws an error if the expression evaluates to a large number
                                            else Result (numE r)
      eval vrs (Log a e)    = case (eval vrs e) of
                               EvalError err -> EvalError err
@@ -100,29 +100,29 @@ module ExprEval where
                                           then
                                             if r > 0
                                             then Result (numLog a r)
-                                            else EvalError "Expression cannot be less than or equal to 0"
-                                          else EvalError "Base must be greater than 0"
+                                            else EvalError "Expression cannot be less than or equal to 0" -- log of negative numbers or 0 doesn't exist
+                                          else EvalError "Base must be greater than 0" --cannot have a base of 0 in log
      eval vrs (Ln e)       = case (eval vrs e) of
                               EvalError err -> EvalError err
                               Result r -> if r > 0
                                           then Result (numLn r)
-                                          else EvalError "Expression cannot be less than or equal to 0"
-     eval vrs (Cos e)      = (numCos) <$> (eval vrs e)
-     eval vrs (Sin e)      = (numSin) <$> (eval vrs e)
+                                          else EvalError "Expression cannot be less than or equal to 0" -- ln of negative numbers or 0 doesn't exist
+     eval vrs (Cos e)      = (numCos) <$> (eval vrs e) -- applies cos to the expression
+     eval vrs (Sin e)      = (numSin) <$> (eval vrs e) -- applies sin to the expression
      eval vrs (Pow e1 e2)  = case (eval vrs e1, eval vrs e2) of
                                (Result r1, Result r2) ->
                                   let res = numPow r1 r2
                                     in if (isInfinity res)
-                                       then EvalError "Invalid operands"
+                                       then EvalError "Invalid operands" -- this throws an error if the expression evaluates to a large number
                                        else
                                          if r1 == 0 && r2 == 0
-                                         then EvalError "Zero to power of zero is undefined"
+                                         then EvalError "Zero to power of zero is undefined" -- 0 to the 0 is undefined
                                          else Result res
                                (_, EvalError err) -> EvalError err
      eval vrs (Const x)    = Result x
      eval vrs (Var v)      = case Map.lookup v vrs of
                                Just x -> Result x
-                               Nothing -> error "Lookup failed in eval"
+                               Nothing -> error "Lookup failed in eval" -- if the variable is not in the list of variables and values
 
      -- | Simplification of an expression
 
@@ -137,14 +137,14 @@ module ExprEval where
             (Const a, Add (Const b) e) -> simplify vrs $ Add (Const (a + b)) (simplify vrs e) -- addtion of nested constants into one consant
             (Const a, e)               -> Add (Const a) s2 -- brings the constant to the front of the simplified expression
             (e, Const a)               -> Add (Const a) s1
-      --    (e, Var x)                 -> Add s1 (Var x)  -- brings the variable to the end of the simplified expression
-      --    (Var x, e)                 -> Add s2 (Var x)
             (Var x, Var y)             -> if x == y
                                           then simplify vrs $ Mult (Const 2) (Var x)
                                           else Add s1 s2
             (Var x, Add (Var y) e)     -> if x == y
                                           then simplify vrs $ Add e (Mult (Const 2) (Var x))
                                           else Add s1 s2
+            (e, Var x)                 -> Add s1 (Var x)  -- brings the variable to the end of the simplified expression
+            (Var x, e)                 -> Add s2 (Var x)
             (x1, Mult (Const (-1)) x2) -> simplify vrs (Sub x1 x2) -- turns addition of an expression and a negative expression into subtraction
             (Ln e3, Ln e4)             -> simplify vrs $ Ln (Mult e3 e4) -- ln rules of addition
             (Log a e3, Log b e4)       -> if a == b -- if the bases are equal, the logarithm rules of addition apply
@@ -174,11 +174,11 @@ module ExprEval where
            (Const a, Const b)         -> Const (a - b) -- simplifies the subtraction of two constants into just one constant
            (Const a, e)               -> Sub (Const a) s2
            (e, Const a)               -> Sub s1 (Const a)
-           (x1, Mult (Const (-1)) x2) -> simplify vrs $ Add x1 x2
+           (x1, Mult (Const (-1)) x2) -> simplify vrs $ Add x1 x2 -- subtraction of a negative number is just addition
            (e, Var x)                 -> Sub s2 (Var x)
            (Var x, e)                 -> Sub (Var x) s2
-           (Ln e3, Ln e4)             -> simplify vrs $ Ln (Div e3 e4)
-           (Log a e3, Log b e4)       -> if a == b
+           (Ln e3, Ln e4)             -> simplify vrs $ Ln (Div e3 e4) --ln rules of subtraction
+           (Log a e3, Log b e4)       -> if a == b  --logarithm rules of subtraction
                                          then simplify vrs $ Log a (Div e3 e4)
                                          else Sub s1 s2
            (x1, x2)                   -> if x1 == x2
@@ -195,7 +195,7 @@ module ExprEval where
          (Const 1, e)                     -> s2 -- anything multiplied by 1 is itself
          (e, Const 1)                     -> s1
          (Const (-1), Const (-1))         -> Const 1
-         (Const (-1),Mult (Const (-1)) e) -> e
+         (Const (-1),Mult (Const (-1)) e) -> e -- two negative make a positive
          (Const a, Const b)               -> Const (a * b) -- simplifies the multiplication of two constants into just one constant
          (Const a, Mult (Const b) e)      -> Mult (Const (a * b)) e
          (Mult (Const a) e, Const b)      -> Mult (Const (a * b)) e
@@ -240,24 +240,24 @@ module ExprEval where
             (Mult (Const a) x1, x2)    -> if x1 == x2
                                           then Const a
                                           else simplify vrs $ Mult (Const a) (Div x1 x2)
-            (Mult x1 x2, x3)           -> if x1 == x3
+            (Mult x1 x2, x3)           -> if x1 == x3 --removes expressions that appear in both the top and bottom
                                           then x2
                                           else if x2 == x3
                                                then x1
                                                else if s1 == x3
                                                     then Const 1
                                                     else Div (Mult x1 x2) x3
-            (x1, Mult x2 x3)           -> if x1 == x3
+            (x1, Mult x2 x3)           -> if x1 == x3 --removes expressions that appear in both the top and bottom
                                           then simplify vrs $ Div (Const 1) x2
                                           else if x1 == x2
                                                then simplify vrs $ Div (Const 1) x3
                                                else if x1 == s2
                                                     then Const 1
                                                     else Div x1 (Mult x2 x3)
-            (Var x, Var y)             -> if x == y
+            (Var x, Var y)             -> if x == y -- if the variables on the top and bottom are the same, it becoems q1
                                           then Const 1
                                           else Div s1 s2
-            (Var x, e)                 -> Div (Var x) s2
+            (Var x, e)                 -> Div (Var x) s2 -- the expression remains the same
             (e, Var x)                 -> Div s1 (Var x)
             (Pow e1 e2, Pow x1 x2)     -> if e1 == x1
                                           then simplify vrs $ Pow e1 (Sub e2 x2)
@@ -358,6 +358,7 @@ module ExprEval where
     numSin :: a -> a
     numPow :: a -> a -> a
 
+  -- | Deals with values of type float
   instance AllNums Float where
     numDiv a b = a / b
     numE x     = exp x
@@ -367,6 +368,7 @@ module ExprEval where
     numSin x   = sin x
     numPow b x = b ** x
 
+  -- | Deals with values of type double
   instance AllNums Double where
     numDiv a b = a / b
     numE x     = exp x
@@ -376,6 +378,7 @@ module ExprEval where
     numSin x   = sin x
     numPow b x = b ** x
 
+  -- | Deals with values of type Int (it turns number into Ints to do this)
   instance AllNums Int where
     numDiv a b = round $ (fromIntegral a) / (fromIntegral b)
     numE x     = round $ exp (fromIntegral x)
@@ -385,6 +388,7 @@ module ExprEval where
     numSin x   = round $ sin (fromIntegral x)
     numPow b x = round $ (fromIntegral b) ** (fromIntegral x)
 
+  -- | Deals with values of type Integer (it turns number into Integers to do this)
   instance AllNums Integer where
     numDiv a b = round $ (fromInteger a) / (fromInteger b)
     numE x     = round $ exp (fromInteger x)

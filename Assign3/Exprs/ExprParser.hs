@@ -23,20 +23,23 @@ module ExprParser (parseExprD, parseExprF, parseExprI) where
                     Left err   -> error $ show err
                     Right expr -> expr -- only parses if the expression is valid
 
+  -- | Parses a constant of type Double
   parseConstD :: Parser (Expr Double)
   parseConstD = do { d <- decimalNum;
                      return $ Const (read d) }
 
+  -- | Parses in order of BEDMAS and mathematical expressions
   exprD :: Parser (Expr Double)
   exprD = let -- parses in order: first, second, third so that it follows the order of BEDMAS
     first = (parens exprD) <|> otherOps (parens exprD) <|> logOpD (parens exprD) <|> (parseConstD <|> parseVar)
     negFirst = do { char '-'; --in case the expression has a negative in front of it
                      f <- first;
                      return $ Mult (Const (-1)) f }
-    second = (first <|> negFirst) `chainl1` powOp
-    third = second `chainl1` mulOp
-    in third `chainl1` addOp
+    second = (first <|> negFirst) `chainl1` powOp -- power is the next highest for order of parsing
+    third = second `chainl1` mulOp -- multiplication and division are next
+    in third `chainl1` addOp -- adiition and subtraction are last
 
+  -- | Parses logarithms of type Double
   logOpD :: Parser (Expr Double) -> Parser (Expr Double)
   logOpD e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ log' (read b) p }
 
@@ -46,20 +49,23 @@ module ExprParser (parseExprD, parseExprF, parseExprI) where
                     Left err   -> error $ show err
                     Right expr -> expr -- only parses if the expression is valid
 
+  -- | Parses a constant of type Float
   parseConstF :: Parser (Expr Float)
   parseConstF = do { d <- decimalNum;
                      return (Const (read d)) }
 
+  -- | Parses in order of BEDMAS and mathematical expressions
   exprF :: Parser (Expr Float)
   exprF = let -- parses in order: first, second, third so that it follows the order of BEDMAS
     first = (parens exprF) <|> otherOps (parens exprF) <|> logOpF (parens exprF) <|> (parseConstF <|> parseVar)
-    negFirst = do { char '-';
+    negFirst = do { char '-'; --in case the expression has a negative in front of it
                      f <- first;
                      return $ Mult (Const (-1)) f }
-    second = (first <|> negFirst) `chainl1` powOp
-    third = second `chainl1` mulOp
-    in third `chainl1` addOp
+    second = (first <|> negFirst) `chainl1` powOp -- power is the next highest for order of parsing
+    third = second `chainl1` mulOp -- multiplication and division are next
+    in third `chainl1` addOp -- adiition and subtraction are last
 
+  -- | Parses logarithms of type Float
   logOpF :: Parser (Expr Float) -> Parser (Expr Float)
   logOpF e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ log' (read b) p }
 
@@ -69,70 +75,82 @@ module ExprParser (parseExprD, parseExprF, parseExprI) where
                     Left err   -> error $ show err
                     Right expr -> expr -- only parses if the expression is valid
 
+  -- | Parses a constant of type Integer
   parseConstI :: Parser (Expr Integer)
   parseConstI = do { d <- digits;
                      return (Const (read d)) }
 
+  -- | Parses in order of BEDMAS and mathematical expressions
   exprI :: Parser (Expr Integer)
   exprI = let -- parses in order: first, second, third so that it follows the order of BEDMAS
     first = (parens exprI) <|> otherOps (parens exprI) <|> logOpI (parens exprI) <|> (parseConstI <|> parseVar)
-    negFirst = do { char '-';
+    negFirst = do { char '-'; --in case the expression has a negative in front of it
                      f <- first;
                      return $ Mult (Const (-1)) f }
-    second = (first <|> negFirst) `chainl1` powOp
-    third = second `chainl1` mulOp
-    in third `chainl1` addOp
+    second = (first <|> negFirst) `chainl1` powOp -- power is the next highest for order of parsing
+    third = second `chainl1` mulOp -- multiplication and division are next
+    in third `chainl1` addOp -- adiition and subtraction are last
 
+ -- | Parses logarithms of type Integer
   logOpI :: Parser (Expr Integer) -> Parser (Expr Integer)
   logOpI e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ log' (read b) p }
 
   {- parsing ints -}
-  parseExprInt :: String -> Expr Integer
-  parseExprInt ss = case parse exprI "" ss of
+  parseExprInt :: String -> Expr Int
+  parseExprInt ss = case parse exprInt "" ss of
                     Left err   -> error $ show err
                     Right expr -> expr -- only parses if the expression is valid
 
-  parseConstInt :: Parser (Expr Integer)
+  -- | Parses a constant of type Int
+  parseConstInt :: Parser (Expr Int)
   parseConstInt = do { d <- digits;
                      return (Const (read d)) }
 
-  exprInt :: Parser (Expr Integer)
+  -- | Parses in order of BEDMAS and mathematical expressions
+  exprInt :: Parser (Expr Int)
   exprInt = let -- parses in order: first, second, third so that it follows the order of BEDMAS
-    first = (parens exprI) <|> otherOps (parens exprI) <|> logOpI (parens exprI) <|> (parseConstI <|> parseVar)
-    negFirst = do { char '-';
+    first = (parens exprInt) <|> otherOps (parens exprInt) <|> logOpInt (parens exprInt) <|> (parseConstInt <|> parseVar)
+    negFirst = do { char '-'; --in case the expression has a negative in front of it
                      f <- first;
                      return $ Mult (Const (-1)) f }
-    second = (first <|> negFirst) `chainl1` powOp
-    third = second `chainl1` mulOp
-    in third `chainl1` addOp
+    second = (first <|> negFirst) `chainl1` powOp -- power is the next highest for order of parsing
+    third = second `chainl1` mulOp -- multiplication and division are next
+    in third `chainl1` addOp -- adiition and subtraction are last
 
-  logOpInt :: Parser (Expr Integer) -> Parser (Expr Integer)
+  -- | Parses logarithms of type Int
+  logOpInt :: Parser (Expr Int) -> Parser (Expr Int)
   logOpInt e1 = do { symbol "log"; b <- digits; spaces; p <- e1; return $ log' (read b) p }
 
   {- General parsers -}
 
+  -- | Parses a variable
   parseVar :: Parser (Expr a)
   parseVar = do { v <- many1 alphaNum;
                   return (Var v) }
-
+  -- | Parses the exponent symbol
   powOp :: (AllNums a) => Parser (Expr a -> Expr a -> Expr a)
   powOp = do { symbol "^"; return (!^) }
 
+  -- | Parses the multiplication or division symbols
   mulOp :: (AllNums a) => Parser (Expr a -> Expr a -> Expr a)
   mulOp = do { symbol "*"; return (!*) }
       <|> do { symbol "/"; return (!/) }
 
+  -- | Parses the addition or subtraction symbols
   addOp :: (AllNums a) => Parser (Expr a -> Expr a -> Expr a)
   addOp = do { symbol "+"; return (!+) }
       <|> do { symbol "-"; return (!-) }
 
+  -- | Parses mathematical expressions that are at the same level in BEDMAS
   otherOps :: (AllNums a) => Parser (Expr a) -> Parser (Expr a)
   otherOps e1 = do { symbol "exp"; p <- e1; return $ nPow p }
             <|> do { symbol "ln"; p <- e1; return $ ln p }
             <|> do { symbol "sin"; p <- e1; return $ sine p }
             <|> do { symbol "cos"; p <- e1; return $ cosine p }
 
-  {- Functions for all types -}
+  {- Helper functions -}
+
+  -- *  Utility Parsers
 
   digits :: Parser String
   digits = many1 digit
