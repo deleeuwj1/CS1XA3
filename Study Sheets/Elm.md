@@ -15,7 +15,21 @@
 ### Basics
 - Modules 
   - To define a program in Elm, you define a module
-     - ```elm
+      ```elm
           module ModName exposing (..) 
        ``` 
+       or ```elm 
+             module ModName exposing (function)
+          ```
+   - Modules can also be imported in a similar manner
+      ```elm 
+         import ModName as MN
+      ```
+      - It is best practice to use the `as` keyword because of Elm's absence of **type classes**
 
+- Differences between Elm and Haskell
+  - No type classes
+  - No ```haskell where ``` clause, only ```elm let-in```
+  - ```haskell data``` becomes ```elm type```
+  - The ```haskell type``` becomes ```elm type alias```
+  - No guards or pattern matching, other than **case statements** 
