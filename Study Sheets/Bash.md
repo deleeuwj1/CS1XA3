@@ -85,12 +85,18 @@ Commands:
    - `2>` or `2>>` write or append to a file from **stderr**
    - `&>` or `&>>` write or append from both **stdout** and **stderr**
 
-- Piping and Compound Commands
+- Piping and Chaining Commands
    - `|` is used to pipe output from one command into another
       - Ex. `ls -la | grep bash`
       - Ex. `ls -la | grep bash | grep profile`
    - `xargs` is also used to do piping 
       - It splits the input into manageable chunks  
+   - Commands can be chained by using a semicolon
+      - Ex. `comm1 ; comm2`
+      - For it only to execute if `comm1` doesn't produce and error
+          - `comm1 && comm2`
+      - For it to execute only if `comm1` produces and error
+          - `comm1 || comm2`
 
 - Important Flags and Such
    - `-r` is used make a command recursive
@@ -110,15 +116,39 @@ Commands:
    - The file is made executable with `chmod a+x`
        - It can then be used by typing `./` and then the file name
    - Variables are used by putting `$` in front of them
-       - The number of variables is obtained by using `$#`
+       - They should be declared with no space between the `=` operator
+           - Ex. `var="This is bash"`
+           - Ex. `mv "$var"`
+       - The number of variables is obtained by using `$#`, and `$@` will let you access all of the arguments at once
        - Variables can also be executed using `${}`
+           - Ex. echo `${Hello}Goodbye`
    - String equalities: =, !=
    - Integer equalities: `-eq`, `-gt`, `-lt` 
    - Double brackets have to be used for arithmetic expansions
        - Ex. `for ((i=1;i<=5;i+=1))`
        - Operators such as `%`, `+` and `-` etc. are only available in the double parenthesis
    - Putting `shopt -s nullglob` before for loops handles situations where it is not possible to iterate through
+       - Iterations of a loop can be skipped with the `continue` command
+       - They can be exited using the `break` command
+   - For if statements, the conditions should be put in square brackets (note that the spaces are important
+        - Ex. `if [ $i -lt 5 ]`
+   - Commands executed in a subshell are done in a different environment than the original one, therefore they **do not** change the current environment
+   - The `read` command can be used to take in user input
+   - We can iterate through items in a directory, and not in it's subdirectories
+        - Ex. `for file in *.tmp`
+   - We can also iterate through all the subdirectories as well
+        - Ex. `find . -name "*.tmp" -print0 |
+                   while IFS='' read -r -d $'\0' file`
+        - `IFS` stops leading or trailing spaces from being trimmed
+        - `read -d` specifies the argument separator
+        - `'\0'` (NULL character) coresponds to the `-print0` 
 
+- Miscellaneous Commands 
+   - `du -h` gives the sive of a directory or file in a human readable format
+   - `wget url` downloads the file at the given URL
+   - `whoami` outputs your username
+   - `which inp` shows the full path of `inp`
+   - `sort file` sorts a file
 
 ## Git
 Terminology: 
