@@ -18,9 +18,10 @@
       ```elm
           module ModName exposing (..) 
        ``` 
-       or ```elm 
-             module ModName exposing (function)
-          ```
+       or
+       ```elm 
+          module ModName exposing (function)
+        ```
    - Modules can also be imported in a similar manner
       ```elm 
          import ModName as MN
@@ -29,7 +30,16 @@
 
 - Differences between Elm and Haskell
   - No type classes
-  - No ```haskell where ``` clause, only ```elm let-in```
-  - ```haskell data``` becomes ```elm type```
-  - The ```haskell type``` becomes ```elm type alias```
+  - No ```haskell 
+           where ``` clause, only
+       ```elm 
+          let-in ```
+  - ```haskell 
+       data ``` becomes 
+    ```elm  
+       type ```
+  - The ```haskell 
+           type ``` becomes 
+        ```elm  
+           type alias ```
   - No guards or pattern matching, other than **case statements** 
