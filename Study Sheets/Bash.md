@@ -1,0 +1,107 @@
+# Study Sheet on Bash and Git 
+
+## Bash
+Commands:
+- `ssh` (Secure SHell) is used for remote login
+- `scp` (Secure Copy) is used for remote transfer of files between machines and servers
+- `man` (Manual) command is used to remember how to use a command
+- File Browsing
+   - `cd` (Change Directory)
+   - `ls` (List) lists the current directory's contents
+     - Hidden files begin with `.` and can't be seen using `ls`
+        - `ls -la` (List All) is used instead
+   - `pwd` (Parent Working Directory) shows where you currently are
+- File Manipulation
+   - `cp` (Copy) copies a file from one location to another
+     - `cp -r` copies a directory and all of its contents 
+   - `mv` (Move) moves a file from one location to another
+   - `mkdir` (Make Directory) creates a new directory
+   - `rm` (Remove) removes a file
+     - `rm -r` removes a directory and all of its contents
+- File Paths
+   - `\` is the **root** directory
+   - `~` is the **home** directory 
+   - `.` specifies the current directory
+   - `..` specifies the previous directory
+   - `cd /path/to` changes the directory to `/path/to`
+   - `cd path/to` changes the directory to `PWD/path/to`
+- Vim
+   - Press `a` to change into **Insert Mode** and press `Esc` to change into **Command Mode**
+   - `:q` to quit; add an exclamation mark (`:q!`) to quit without saving
+   - `:w` (Write) saves
+   - `dd` deletes the line that the user is currently on
+   - `u` (Undo)
+   - `Ctrl-r` for redo 
+- Bash Profile
+   - A hidden script `.bash_profile` that loads every time a terminal session is started
+   - This can be used to created custom commands
+     - Ex. `alias ll="ls -la" lets you use `ll` instead of `ls -la`
+
+- Environment Variable
+   - Environment variables are values that can affect the way running processes will behave on a computer
+   - The **PATH** variable is the most important 
+   - Everything command/program accessible is either in the current working directory 
+      - To see what's in the path, use `exho $PATH`
+      - To see where a command is located, use `which` command
+
+- Glob Patterns
+   - `*` matches any quantity of character
+   - `?` matches the occurence of a single character
+   - `\` escapes a special character
+   - `[...]` matches one occurence of a character within brackets  
+
+- Syntax of Commands
+   - Spaces are used to separate arguments in commands
+   - Quotations aren't used to specify strings, and are instead used to stop spaces in names from creating separate arguments
+      - It's a good idea to use quotations marks when using glob patterns
+
+- IO Redirection
+   - `>` is used to overwrite or create a file from **stdout**
+   - `>>` appends to or creates a file from **stdout**
+   - `2>` or `2>>` write or append to a file from **stderr**
+   - `&>` or `&>>` write or append from both **stdout** and **stderr**
+
+- Piping and Compound Commands
+   - `|` is used to pipe output from one command into another
+   - Ex. `ls -la | grep bash`
+   - Ex. `ls -la | grep bash | grep profile`
+
+- Important Flags and Such
+   - `-r` is used make a command recursive
+   - `-R` is used to search only **files** in the specified directory
+   - `-v` is used to reverse grep, and shows lines excluding the specified pattern
+   - `-i` is used to ignore cases when matching a pattern
+   - `-I` is used to list only te filenames
+   - Word Count flags
+      - `wc -w` is used to count words
+      - `wc -l` is used to count lines
+      - `wc -m` is used to count characters
+
+
+
+## Git
+Terminology: 
+- **Working Directory**: the local directory you downloaded your repo to
+- **Index** and **Local Repository**: files providing version control on your system
+- **Remote Repository**: the GitHub server where your repo is kept
+
+Connection Between Repositories
+![alt text][link]
+
+[link]: https://greenido.files.wordpress.com/2013/07/git-local-remote.png?w=696&h=570 "Repo diagram"
+
+Commands:
+- `git clone` downloads the code from a Remote Repo into the current directory
+- `git pull` merges code from the remote repo to the current directory
+- `git add` and `git rm` add or remove files/directories
+- `git reset` undoes local changes (opposite of `git add`)
+   - `git reset -hard` changes everything back to the last commit
+      - the last commit is known as **HEAD**
+   - It can also be specified which commit to revert back to
+- `git commit -m` commits changes to the local repo with a message describing the changes
+- `git push` pushes changes in the local repo to the remote repo
+- `git status` shows the current status of staged files
+- `git log` displays the log of commits
+- `git -help` lists git commands with description
+
+Created by Jessica de Leeuw 
