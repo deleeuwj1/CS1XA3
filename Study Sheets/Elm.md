@@ -21,7 +21,7 @@
        or
        ```elm 
           module ModName exposing (function)
-        ```
+       ```
    - Modules can also be imported in a similar manner
       ```elm 
          import ModName as MN
@@ -30,16 +30,42 @@
 
 - Differences between Elm and Haskell
   - No type classes
-  - No ```haskell 
-           where ``` clause, only
-       ```elm 
-          let-in ```
-  - ```haskell 
-       data ``` becomes 
-    ```elm  
-       type ```
-  - The ```haskell 
-           type ``` becomes 
-        ```elm  
-           type alias ```
+  - No `where` clause, only `let-in`
+  - `data` becomes `type`
+  - `type` becomes `type alias`
   - No guards or pattern matching, other than **case statements** 
+
+## The Elm Architecture
+- Init
+  - Initialized the program
+  - Provides information describing the initial state of the program
+ 
+- Model
+  - Definition of a data type that represents the state of the program
+
+- View
+  - Takes the **Model** and generates HTMl 
+
+- Update
+  - A function that takes the **Module** and generates a new, updated Model
+
+- Main
+  - There are many types of programs, for instance:
+    ```elm
+       main : Program Never Model Msg
+       main = Html.beginnerProgram
+              { model = init
+              , view = view
+              , update = update }
+    ```
+  - Other definitions add more functionality:
+    ```elm
+       main : Program Never Model Msg
+       main = Html.program
+              { init = init
+              , view = view
+              , update = update
+              , subscriptions = subscriptions }
+    ```
+
+
