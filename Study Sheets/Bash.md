@@ -1,10 +1,9 @@
 # Study Sheet on Bash and Git 
 
-## Bash
-Commands:
-- `ssh` (Secure SHell) is used for remote login
-- `scp` (Secure Copy) is used for remote transfer of files between machines and servers
-- `man` (Manual) command is used to remember how to use a command
+- Commands
+   - `ssh` (Secure SHell) is used for remote login
+   - `scp` (Secure Copy) is used for remote transfer of files between machines and servers
+   - `man` (Manual) command is used to remember how to use a command
 
 - File Browsing
    - `cd` (Change Directory)
