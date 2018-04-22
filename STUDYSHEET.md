@@ -37,7 +37,8 @@ Terminology:
 - **Working Directory**: the local directory you downloaded your repo to
 - **Index** and **Local Repository**: files providing version control on your system
 - **Remote Repository**: the GitHub server where your repo is kept
-![Connection between repositories](C:\Users\Jessica\Desktop\GitShit.PNG) 
+
+![Connection between repositories](GitShit.PNG) 
 
 Commands:
 - `git clone` downloads the code from a Remote Repo into the current directory
