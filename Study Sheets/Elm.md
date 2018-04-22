@@ -15,7 +15,7 @@
 ### Basics
 - Modules 
   - To define a program in Elm, you define a module
-     - ```haskell
+     - ```elm
           module ModName exposing (..) 
        ``` 
 
