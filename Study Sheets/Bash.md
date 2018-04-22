@@ -5,19 +5,29 @@ Commands:
 - `ssh` (Secure SHell) is used for remote login
 - `scp` (Secure Copy) is used for remote transfer of files between machines and servers
 - `man` (Manual) command is used to remember how to use a command
+
 - File Browsing
    - `cd` (Change Directory)
    - `ls` (List) lists the current directory's contents
      - Hidden files begin with `.` and can't be seen using `ls`
         - `ls -la` (List All) is used instead
    - `pwd` (Parent Working Directory) shows where you currently are
+
 - File Manipulation
    - `cp` (Copy) copies a file from one location to another
      - `cp -r` copies a directory and all of its contents 
    - `mv` (Move) moves a file from one location to another
    - `mkdir` (Make Directory) creates a new directory
    - `rm` (Remove) removes a file
-     - `rm -r` removes a directory and all of its contents
+     - `rm -r` removes a directory and all of its contents  
+   - `sed` deals with patterns in files
+      - `sed /pattern/a line to insert` inserts a new line after a pattern
+      - `sed /pattern/i line to insert` inserts a new line before a pattern
+      - `sed /pattern/c line to insert` replaces a line with a pattern
+      - `sed s/old/new` substitutes one word for another 
+      - `sed s/old//g` deletes a word
+      - `sed /pattern/d` deletes any line with the specified pattern
+
 - File Paths
    - `\` is the **root** directory
    - `~` is the **home** directory 
@@ -25,6 +35,19 @@ Commands:
    - `..` specifies the previous directory
    - `cd /path/to` changes the directory to `/path/to`
    - `cd path/to` changes the directory to `PWD/path/to`
+
+- Finding Files
+   - `find dir -name pattern -type f` limits to file or directory with the specified type
+   - `find dir -name pattern -exec cm {} \;` executes a command without prompt
+   - `find fir -name pattern -ok cm {} \;` executes a command with prompt
+   - `find dir -name pattern -print` prints files starting at current directory
+      - `{}` specifies the input
+      - `\;` specifies to execute each command separately
+      - Adding a `+` at the end specifies to add all arguaments at once
+   - Because of spaces, `find -exec` commands often go wrong
+      - `-print0` is used to output the result of a find separated by a special character 
+      - They can then be parsed by `xargs` with the `-0` flag
+
 - Vim
    - Press `a` to change into **Insert Mode** and press `Esc` to change into **Command Mode**
    - `:q` to quit; add an exclamation mark (`:q!`) to quit without saving
@@ -32,6 +55,7 @@ Commands:
    - `dd` deletes the line that the user is currently on
    - `u` (Undo)
    - `Ctrl-r` for redo 
+
 - Bash Profile
    - A hidden script `.bash_profile` that loads every time a terminal session is started
    - This can be used to created custom commands
@@ -63,8 +87,10 @@ Commands:
 
 - Piping and Compound Commands
    - `|` is used to pipe output from one command into another
-   - Ex. `ls -la | grep bash`
-   - Ex. `ls -la | grep bash | grep profile`
+      - Ex. `ls -la | grep bash`
+      - Ex. `ls -la | grep bash | grep profile`
+   - `xargs` is also used to do piping 
+      - It splits the input into manageable chunks  
 
 - Important Flags and Such
    - `-r` is used make a command recursive
@@ -77,6 +103,21 @@ Commands:
       - `wc -l` is used to count lines
       - `wc -m` is used to count characters
 
+- Bash Scripts
+   - Have the extension `.sh`
+   - `#/bin/bash` is put at the top of the file
+   - Executed using the `sh` command
+   - The file is made executable with `chmod a+x`
+       - It can then be used by typing `./` and then the file name
+   - Variables are used by putting `$` in front of them
+       - The number of variables is obtained by using `$#`
+       - Variables can also be executed using `${}`
+   - String equalities: =, !=
+   - Integer equalities: `-eq`, `-gt`, `-lt` 
+   - Double brackets have to be used for arithmetic expansions
+       - Ex. `for ((i=1;i<=5;i+=1))`
+       - Operators such as `%`, `+` and `-` etc. are only available in the double parenthesis
+   - Putting `shopt -s nullglob` before for loops handles situations where it is not possible to iterate through
 
 
 ## Git
