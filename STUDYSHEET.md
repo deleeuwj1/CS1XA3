@@ -38,7 +38,7 @@ Terminology:
 - **Index** and **Local Repository**: files providing version control on your system
 - **Remote Repository**: the GitHub server where your repo is kept
 
-![Connection between repositories](GitShit.PNG) 
+![Connection between repositories](https://www.google.com/search?q=connection+between+local+and+remote+repos&client=firefox-b-ab&source=lnms&tbm=isch&sa=X&ved=0ahUKEwj77oD9mc7aAhUq0oMKHa8dB-wQ_AUICigB&biw=638&bih=645&dpr=2.5#imgrc=Z4vPVIS-Jp4L_M:) 
 
 Commands:
 - `git clone` downloads the code from a Remote Repo into the current directory
