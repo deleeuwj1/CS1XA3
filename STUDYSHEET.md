@@ -4,6 +4,7 @@
 Commands:
 - `ssh` (Secure SHell) is used for remote login
 - `scp` (Secure Copy) is used for remote transfer of files between machines and servers
+- `man` (Manual) command is used to remember how to use a command
 - File Browsing
    - `cd` (Change Directory)
    - `ls` (List) lists the current directory's contents
@@ -33,17 +34,24 @@ Commands:
 
 ## Git
 Terminology: 
-- **Working Directory** the local directory you downloaded your repo to
-- **Index** and **Local Repository** files providing version control on your system
-- **Remote Repository** the GitHub server where your repo is kept
- 
+- **Working Directory**: the local directory you downloaded your repo to
+- **Index** and **Local Repository**: files providing version control on your system
+- **Remote Repository**: the GitHub server where your repo is kept
+![Connection between repositories](C:\Users\Jessica\Desktop\GitShit.PNG) 
+
 Commands:
 - `git clone` downloads the code from a Remote Repo into the current directory
 - `git pull` merges code from the remote repo to the current directory
 - `git add` and `git rm` add or remove files/directories
 - `git reset` undoes local changes (opposite of `git add`)
+   - `git reset -hard` changes everything back to the last commit
+      - the last commit is known as **HEAD**
+   - It can also be specified which commit to revert back to
 - `git commit -m` commits changes to the local repo with a message describing thechanges
 - `git push` pushes changes in the local repo to the remote repo
+- `git status` shows the current status of staged files
+- `git log` displays the log of commits
+- `git -help` lists git commands with descriptions
 
 
 ## ELM
