@@ -136,7 +136,7 @@
                                res     -> res )
 ```
 - The Parsec Library
-  - The definition of Parsec is a lot more complicated, but using it is mucheasier
+  - The definition of Parsec is a lot more complicated, but using it is much easier
   - Some important combinators:
      - `(<|>)` executes the second command only if the first fails without consuming any input
      - `try` allows you to execute a parser and pretend no input has been consumed
