@@ -40,11 +40,8 @@
     ```haskell
        data Thing = { property1 :: type, property2 :: type}
     ```
-#skell
-       data TypeName = E1 | E2 | E3
-         deriving (Show, Eq)
-    ```
-# Functors and Applicatives
+
+### Functors and Applicatives
 - Functors
   - A class of **Mappable** datatypes
     - The `map` function can be defined over a functor
@@ -81,8 +78,27 @@
     - `pure f <*> pure x = pure (f x)`
     - `u <*> pure y = pure ($ y) <*> u`
     - `pre (.) <*> u <*> v <*> w = u <*> (v <*> w)`
-    
 
+### Monoids and Monads    
+- Monoids
+  - This typeclass has associative binary operators with an identity
+  - Ex. List are monoids
+    ```haskell
+       class Monoid [a] where
+         mempty = []
+         mappend = (++)
+    ```
+- Monads
+  - Monads can be used to chain functions together, without haveing to repeatedly wrap and unwrap the values
+  - Ex.
+    ```haskell
+       class Applicative => Monad m where
+         (>>=) :: m a -> (a -> m b) -> m b
+         (>>) :: m a -> m b -> m b
+         return :: a -> m a
+         fail :: String -> m a
+  - IO values can only be accessible through Functors and Monads because they contain **side-effects**
+    ```
 
 
 
