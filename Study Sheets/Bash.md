@@ -60,11 +60,11 @@
    - This can be used to created custom commands
      - Ex. `alias ll="ls -la"` lets you use `ll` instead of `ls -la`
 
-- Environment Variable
+- Environment Variables
    - Environment variables are values that can affect the way running processes will behave on a computer
    - The **PATH** variable is the most important 
-   - Everything command/program accessible is either in the current working directory 
-      - To see what's in the path, use `exho $PATH`
+   - Everything command/program accessible is either in the current working directory or the **PATH**
+      - To see what's in the path, use `echo $PATH`
       - To see where a command is located, use `which` command
 
 - Glob Patterns
