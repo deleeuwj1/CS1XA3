@@ -39,16 +39,31 @@
 - Init
   - Initialized the program
   - Provides information describing the initial state of the program
- 
+  - Defined as:
+    ```elm
+       init : Model
+       init = ...
+    ```
 - Model
   - Definition of a data type that represents the state of the program
-
+  - Defined as:
+    ```elm
+       type alias Model =
+    ```
 - View
   - Takes the **Model** and generates HTMl 
-
+  - Defined as:
+    ```elm
+       view : Model -> Html Msg
+       view model = ...
+    ```
 - Update
   - A function that takes the **Module** and generates a new, updated Model
-
+  - Defined as:
+    ```elm
+       update : Msg -> Model -> Model
+       update msg model = ...
+    ```
 - Main
   - There are many types of programs, for instance:
     ```elm
@@ -67,5 +82,38 @@
               , update = update
               , subscriptions = subscriptions }
     ```
-
+## Elm HTML
+- Elm and HTML are very similar
+```elm
+   div [] [ 
+           h1 [style [("color", "blue")] ] [ text "Hello World" ]
+          ]
+```
+versus
+```html
+   <div>
+     <h1 style="color:blue;">Hello World</h1>
+   <div>
+```
+- Elm HTML Tags
+  - `div` is just a generic container
+  - `p` groups text into a paragraph
+  - `pre` groups text and leaves it formatted as is
+  - `b` is for bold, `sub` for subscript, `sup` for superscript 
+  - `br` for a line break
+  - `ol` for an ordered list, `ul` for an unordered list and `li` for an enumerated list
+  - `img` for embedding an image, and `a` for creating a hyperlink
+    - Ex.
+      ```elm
+         main = div [] [ 
+                         h1 [] [text "Drunk Rick"] 
+                       , img [src "www.somelink.com/drunkrick"] []
+                       ]
+      ```
+  - **CSS** can also be used in Elm 
+    - Ex.
+      ```elm
+         myStyle = [ ("backgroundColor", "red"), ("height", "90px") ] 
+      ```
+ 
 
