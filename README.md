@@ -46,3 +46,9 @@ Session: Winter 2018
 ## Labs
   - This directory contains subdirectories for each of the marked labs.
      - These contain encrypted files with answers for the in-class labs.
+
+## Study Sheet
+  - This directory contains three study sheets, one for each of the topics covered in CS 1XA3
+     - `Bash.md`
+     - `Elm.md`
+     - `Haskell.md`
