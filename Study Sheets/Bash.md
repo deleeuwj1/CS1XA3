@@ -42,7 +42,7 @@
    - `find dir -name pattern -print` prints files starting at current directory
       - `{}` specifies the input
       - `\;` specifies to execute each command separately
-      - Adding a `+` at the end specifies to add all arguaments at once
+      - Adding a `+` at the end specifies to add all arguments at once
    - Because of spaces, `find -exec` commands often go wrong
       - `-print0` is used to output the result of a find separated by a special character 
       - They can then be parsed by `xargs` with the `-0` flag
@@ -58,7 +58,7 @@
 - Bash Profile
    - A hidden script `.bash_profile` that loads every time a terminal session is started
    - This can be used to created custom commands
-     - Ex. `alias ll="ls -la" lets you use `ll` instead of `ls -la`
+     - Ex. `alias ll="ls -la"` lets you use `ll` instead of `ls -la`
 
 - Environment Variable
    - Environment variables are values that can affect the way running processes will behave on a computer
