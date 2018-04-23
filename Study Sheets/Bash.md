@@ -102,7 +102,7 @@
    - `-R` is used to search only **files** in the specified directory
    - `-v` is used to reverse grep, and shows lines excluding the specified pattern
    - `-i` is used to ignore cases when matching a pattern
-   - `-I` is used to list only te filenames
+   - `-I` is used to list only the filenames
    - Word Count flags
       - `wc -w` is used to count words
       - `wc -l` is used to count lines
@@ -117,7 +117,7 @@
    - Variables are used by putting `$` in front of them
        - They should be declared with no space between the `=` operator
            - Ex. `var="This is bash"`
-           - Ex. `mv "$var"`
+           - Ex. `echo "$var"`
        - The number of variables is obtained by using `$#`, and `$@` will let you access all of the arguments at once
        - Variables can also be executed using `${}`
            - Ex. echo `${Hello}Goodbye`
@@ -129,7 +129,7 @@
    - Putting `shopt -s nullglob` before for loops handles situations where it is not possible to iterate through
        - Iterations of a loop can be skipped with the `continue` command
        - They can be exited using the `break` command
-   - For if statements, the conditions should be put in square brackets (note that the spaces are important
+   - For if statements, the conditions should be put in square brackets (note that the spaces are important)
         - Ex. `if [ $i -lt 5 ]`
    - Commands executed in a subshell are done in a different environment than the original one, therefore they **do not** change the current environment
    - The `read` command can be used to take in user input
@@ -140,7 +140,7 @@
                    while IFS='' read -r -d $'\0' file`
         - `IFS` stops leading or trailing spaces from being trimmed
         - `read -d` specifies the argument separator
-        - `'\0'` (NULL character) coresponds to the `-print0` 
+        - `'\0'` (NULL character) corresponds to the `-print0` 
 
 - Miscellaneous Commands 
    - `du -h` gives the sive of a directory or file in a human readable format

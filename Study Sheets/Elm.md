@@ -165,6 +165,6 @@ versus
        view model = svg [ width "600", height "400" ] 
                         [ circle [cx "300", cy "300", r "20", fill "blue" ] [] ]
     ```
-
+Created by Jessica de Leeuw
 
 
