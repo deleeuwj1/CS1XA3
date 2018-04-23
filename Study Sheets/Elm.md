@@ -36,6 +36,15 @@
   - No guards or pattern matching, other than **case statements** 
 
 ## The Elm Architecture
+- Messages
+  - These define things that happen in the application that the components respond to
+  - Defined as:
+    ```elm
+       type Msg = Something 
+                | SomethingElse
+                | MaybeAnotherThing
+    ```
+
 - Init
   - Initialized the program
   - Provides information describing the initial state of the program
@@ -64,6 +73,14 @@
        update : Msg -> Model -> Model
        update msg model = ...
     ```
+- Subscriptions
+  - These allow the program to listen for **external output** such as Keyboard and Mouse events
+  - Defined as:
+    ```elm
+       subscriptions : Model -> Sub Msg
+       subscriptions model = ...
+    ```
+
 - Main
   - There are many types of programs, for instance:
     ```elm
@@ -115,5 +132,10 @@ versus
       ```elm
          myStyle = [ ("backgroundColor", "red"), ("height", "90px") ] 
       ```
+- Elm Buttons
+  - Buttons should include an event from `Html.Event`
+  - They are defined like this:
+    ```elm
+       main = div [] [ button [onClick Msg] [text "Label"] ]  
+    ```
  
-
