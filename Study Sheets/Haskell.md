@@ -99,6 +99,27 @@
          fail :: String -> m a
   - IO values can only be accessible through Functors and Monads because they contain **side-effects**
     ```
+### Parsing
+- Processing a String into a desired data structure
+- Because Parsing may fail, the result is wrapped in a `Maybe` type
+  - Monads are used to write parsers because they deal with the wrapping and unwrapping
+  - Ex. 
+    ```haskell
+       parseTwoDigs :: String -> Maybe (Int, Int, String)
+       parseTwoDigs ss = do { (d1, ss')  <- parseDigit ss
+                              (d2, ss'') <- parseDigit ss'
+                              return (d1, d2, ss'') }
+    ```
+- A better way to define a parser would be by wrapping it:
+```haskell
+   data Parser a = Parser (String -> Maybe (a, String))
+```
+  - To unwrap the function without doing it every time, a helper function can be written
+  ```haskell
+     parse :: Parser a -> String
+     parse (Parse p) ss = p ss
+  ```
+- More complicated parsers are built out of smaller parsers, known as **parser combinators**
 
 
 
