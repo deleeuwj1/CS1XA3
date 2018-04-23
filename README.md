@@ -41,7 +41,7 @@ Session: Winter 2018
           Pow (expression) (expression)  -- inputted as (expression) ^ (expression)
         ```
      - For more information on usage, see the [README.md](https://github.com/deleeuwj1/CS1XA3/blob/master/Assign3/README.md) in the Assign3 folder.
-  - If you would like to view documentation for the library, visit [this site] (https://deleeuwj1.github.io/docs/).
+  - If you would like to view documentation for the library, visit [this site](https://deleeuwj1.github.io/docs/).
 
 ## Labs
   - This directory contains subdirectories for each of the marked labs.
