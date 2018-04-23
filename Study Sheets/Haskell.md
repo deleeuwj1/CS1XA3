@@ -97,8 +97,8 @@
          (>>) :: m a -> m b -> m b
          return :: a -> m a
          fail :: String -> m a
-  - IO values can only be accessible through Functors and Monads because they contain **side-effects**
-    ```
+  - IO values are only accessible through Functors and Monads because they contain **side-effects**
+
 ### Parsing
 - Processing a String into a desired data structure
 - Because Parsing may fail, the result is wrapped in a `Maybe` type
@@ -120,10 +120,84 @@
      parse (Parse p) ss = p ss
   ```
 - More complicated parsers are built out of smaller parsers, known as **parser combinators**
+- Using Functors and Applicatives on Parsers are okay, but using Monads is best
+```haskell
+   instance MOnad Parser where
+     p >>= f = Parser (\ss -> case parse p ss of
+                               Just (a, ss') -> parse (f a) ss'
+                               Nothing       -> Nothing )  
+```
+- Another useful class is called **Alternative**
+```haskell
+   instance Alternative Parser where 
+    empty = zero
+    p <|> a = Parser (\ss -> case parse p ss of
+                               Nothing -> parse q ss
+                               res     -> res )
+```
+- The Parsec Library
+  - The definition of Parsec is a lot more complicated, but using it is mucheasier
+  - Some important combinators:
+     - `(<|>)` executes the second command only if the first fails without consuming any input
+     - `try` allows you to execute a parser and pretend no input has been consumed
+        - Used with `(<|>)`
+     - `many` applies the parser zero or more times
+     - `sepBy` applies the first parser separated by the second parser
+     - `spaces` skips zero or more spaces
+     - `char` parses the specified character or fails
+     - `anyChar` parses any character or fails
+     - `string` parses the specified string or fails
+  - Some combinators that Parsec shoudl include but doesn't
+    ```haskell
+       symbol :: String -> Parser String
+       symbol ss = do { spaces ; 
+                        ss' <- string ss;
+                        spaces; return ss'}
+       
+       parens :: Parser a -> Parser a
+       parens p = do { char '(';
+                       cs <- p;
+                       char ')';
+                       return cs }
+      
+       digits :: Parser Integer
+       digits = many1 digit
+     
+       negDigits :: Parser String
+       negDigits = do { neg <- symbol "-";
+                        dig <- digits;
+                        return (neg ++ dig) }
+    
+       integer :: Parser Integer
+       integer = fmap read $ try negDigits <|> digits
+    ``` 
 
+### Expression Trees
+- Binary Trees
+  - Like a **Linked List** with two links at each node instead of one
+  ```haskell
+     data BinTree a = Node (BinTree a) (BinTree a)
+                    | Leaf a 
+  ```
+- Multi-way Trees (Rose Trees)
+  - These allow for an arbitrary number of branches at each node
+  ```haskell
+     data RoseTree a = RoseTree a [RoseTree a]
+  ```
+- Data Maps
+  - These associate **key-value** pairs
+  - A map can be constructed from a list of tuples
+  - An efficient one is provided by `Data.Map.Strict`
 
+- Expression Trees
+  - These have generalized nodes (they're indistinguishable from each other)
+  ```haskell
+     data Expr a = Op1 (Expr a) (Expr a)
+                 | Op2 (Expr a) (Expr a)
+                 | Const a
+  ```
+  - These are what we used in Assignment 3
 
-
-
-
-
+### Domain Specific Languages (DSLs)
+- These are small languages that are focused on a particular aspect of a software system
+   - Assignment 3 is a simple example
