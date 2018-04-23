@@ -60,7 +60,7 @@
        type alias Model =
     ```
 - View
-  - Takes the **Model** and generates HTMl 
+  - Takes the **Model** and generates HTML 
   - Defined as:
     ```elm
        view : Model -> Html Msg
@@ -80,6 +80,17 @@
        subscriptions : Model -> Sub Msg
        subscriptions model = ...
     ```
+  - Subscriptions can be **batched**, or combined
+    - This means that they can listen for multiple events in one subscription
+    - Ex.
+      ```elm
+         subscriptions model = Sub.batch
+             [ Mouse.clicks MouseMsg
+             , Keyboard.downs KeyMsg ]
+      ``` 
+- Commands
+   - These are used to execute things that involve **side effects**
+   - Ex. Random Number Generation, HTTP requests, saving to local storage
 
 - Main
   - There are many types of programs, for instance:
@@ -138,4 +149,22 @@ versus
     ```elm
        main = div [] [ button [onClick Msg] [text "Label"] ]  
     ```
- 
+
+## SVG Graphics
+- Record Types
+  - This is a unique structure to Elm
+  - Ex. 
+    ```elm
+       type alias Pos = { x : Int, y : Int }
+       pos = { x = 5, y = 3 }
+    ```  
+- SVG Graphics
+  - This library contains a large variety of shapes, as well as other functionalities
+  - Can be used like so: 
+    ```elm
+       view model = svg [ width "600", height "400" ] 
+                        [ circle [cx "300", cy "300", r "20", fill "blue" ] [] ]
+    ```
+
+
+
